@@ -6,6 +6,7 @@
     this.rootNode = element;
     this.rootNode.style.width = '300px';
     this.rootNode.style.height = '400px';
+    this.rootNode.style.overflow = 'hidden';
     this.query = this.rootNode.getAttribute('data-query');
     this.itunes = this.rootNode.getAttribute('data-itunes');
     this.bg = this.rootNode.getAttribute('data-bg');
