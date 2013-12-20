@@ -9,6 +9,10 @@
     this.query = this.rootNode.getAttribute('data-query');
     this.itunes = this.rootNode.getAttribute('data-itunes');
     this.bg = this.rootNode.getAttribute('data-bg');
+
+    this.head = this.rootNode.getAttribute('data-head');
+
+
     this.rootNode.style.backgroundImage = 'url("' + this.bg + '")';
 
     this.availableWidth = 0;
@@ -85,8 +89,12 @@
     this.init = function() {
       var promodiv = document.createElement('div');
 
+
       promodiv.style.width = '300px';
       promodiv.style.height = '100px';
+      if (this.head) {
+         promodiv.style.height = this.head + 'px';
+      }
       promodiv.style.textAlign = 'right';
       promodiv.innerHTML = '<br/><a href="' + this.itunes + '" target="itunes_store"style="display:inline-block;overflow:hidden;background:url(https://linkmaker.itunes.apple.com/htmlResources/assets/en_us//images/web/linkmaker/badge_itunes-lrg.png) no-repeat;width:110px;height:40px;@media only screen{background-image:url(https://linkmaker.itunes.apple.com/htmlResources/assets/en_us//images/web/linkmaker/badge_itunes-lrg.svg);}"></a>&nbsp;&nbsp;&nbsp;&nbsp;'
 
@@ -97,13 +105,16 @@
       this.theater.style.height= '300px';
       this.theater.style.padding = '0px';
       this.theater.style.margin = '0px';
+      if (this.head) {
+        this.theater.style.height= (300 + 100 - this.head) + 'px';
+      }
 
       this.rootNode.appendChild(this.theater);
     };
 
     this.init();
     this.loadMore();
-     this.render();
+    this.render();
   }
 
   var walls = document.getElementsByName('urturn-social-ad');
