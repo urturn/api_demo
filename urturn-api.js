@@ -10,7 +10,7 @@ if (!urturn) {
      * The API HOST (usefull for debug in local env)
      * @type {String}
      */
-    var HOST = 'www.urturn.com';
+    var HOST = 'staging-ut.urturn.com';
 
     /**
      * API ENDPOINT
@@ -25,6 +25,15 @@ if (!urturn) {
     var TYPES = {
       post : {
         name : 'posts',
+        selectors : {
+          id : 'id',
+          username : 'username',
+          epxression : 'expression_name',
+          query : 'q'
+        }
+      },
+      expression : {
+        name : 'expressions',
         selectors : {
           id : 'id',
           username : 'username',
@@ -73,12 +82,18 @@ if (!urturn) {
      *  - All result reurned are paginated. If no page specific page is asked, the query will return
      *  first page first time it is called, second page second time it is called, ....
      *
-     *  - For now just the 'post' type is supported with the following selector :
+     *  - the 'post' type is supported with the following selector :
      *    ~ 'id' : Select a post by id. Return only one post
      *    ~ 'username' : Select post by username. Return all posts of an user
      *    ~ 'expression' : Select post by expression. Return all posts of from a given expression
      *    ~ 'query' : Select post by a query. Return all posts matching the query
-     *
+     *  
+     *  - the 'expression' type is supported with the following selector :
+     *    ~ 'id' : Select a expression by id. Return only one expression
+     *    ~ 'username' : Select expression by username. Return all expression of an user
+     *    ~ 'expression' : Select expression by expression name. Return this expression
+     *    ~ 'query' : Select expression by a query. Return all expressions matching the query
+     *    
      *   @return {bool} Return true when fails, false when no issues detected
      */
   
