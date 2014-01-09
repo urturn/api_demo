@@ -30,7 +30,6 @@
     this.index = 0;
 
     this.querrySuccess = function (result) {
-      console.log(result);
       var thumbs = result.thumbnails;
       var i = 0;
       while (i < thumbs.length) {
@@ -55,7 +54,6 @@
     };
 
     this.render = function() {
-      console.log('render');
       setTimeout(this.render.bind(this), 200);
       if (!this.loadedImages.length) {
         return;
