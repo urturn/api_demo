@@ -210,7 +210,7 @@
 
     this.postLoaded = function(data) {
       this.adaptSize();
-      this.setCreatorAvatar(data.expression.creator.avatar_thumb_url);
+     // this.setCreatorAvatar(data.expression.creator.avatar_thumb_url);
       this.setCTA(data.expression.description, data.expression.creator.username);
       this.addPost(data.posts);
     };
@@ -231,7 +231,7 @@
         font : '20px Helvetica',
         position : 'relative',
         top : 0,
-        left : 10,
+        left : -65,
         width : this.width - 95
       });
       ctaDiv.innerHTML = CTA + '<br/> <span style="font-size :15px; color : #888">by ' + author + '</span>';
@@ -262,13 +262,13 @@
 
         var aSize = this.columnWidthPx / 7 | 0;
         var avatar = this.createElement('img', {
-          width : aSize + 'px',
-          height : aSize + 'px',
+          width : 20 + 'px',
+          height : 20 + 'px',
           borderRadius : '50%',
-      //   border : '1px solid #efefef',
+         border : '2px solid #efefef',
           position : 'relative',
-          bottom : (aSize + 2*(aSize / 10 | 0)) + 'px',
-          left : (aSize / 10 | 0) + 'px'
+          bottom : 30 + 'px',
+          left : 10 + 'px'
         });
         avatar.src = data.creator.avatar_thumb_url;
         post.appendChild(avatar);
