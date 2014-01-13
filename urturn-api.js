@@ -310,6 +310,7 @@ if (!urturn) {
         successCallback(result);
       };
 
+      /* // IE6 Do not support that
       xhr.ontimeout = function(e) {
         errorCallback(error('get', 'XHR_TIMEOUT', {}));
       };
@@ -317,7 +318,8 @@ if (!urturn) {
       xhr.onerror = function (e) {
         errorCallback(error('get', 'XHR_ERROR', {}));
       };
-
+       */
+ 
       xhr.send(null);
     };
 
