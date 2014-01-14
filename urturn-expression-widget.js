@@ -28,11 +28,11 @@
     }
 
     this.showAvatar = rootElement.getAttribute('data-avatar');
-    if (this.showAvatar === 'show') {
-      this.showAvatar = true;
+    if (this.showAvatar === 'hide') {
+      this.showAvatar = false;
     }
     else {
-      this.showAvatar = false;
+      this.showAvatar = true;
     }
 
 
@@ -249,9 +249,9 @@
         color : '#000',
         font : '20px Helvetica',
         position : 'relative',
-        top : 0,
-        left : 20,
-        width : this.width - 95
+        top : '0px',
+        left : '20px',
+        width : (this.width -20) + 'px'
       });
       if (withAuthor) {
        ctaDiv.innerHTML = CTA + '<br/> <span style="font-size :15px; color : #888">by ' + author + '</span>';
@@ -265,7 +265,7 @@
       var ctaHeight   = ctaDiv.offsetHeight;
       var deltaHeight = (75 - ctaHeight) / 2 | 0;
       this.style(ctaDiv, {
-        top : deltaHeight
+        top : deltaHeight + 'px'
       });
     };
 
@@ -277,7 +277,7 @@
         }
         var post = this.createElement('div', {
           width : '100%',
-          height : (this.width - 17) / this.numberOfColumns | 0 + 'px',
+          height : ((this.width - 17) / this.numberOfColumns | 0) + 'px',
           overflow : 'hidden'
         });
         if (height < 290 * this.columnWidthRatio) {
@@ -287,7 +287,8 @@
         }
 
         var img = this.createElement('img', {
-          width : '100%'
+          width : '100%',
+          display : 'block'
         });
         if (data.thumbnails && data.thumbnails.small) {
           img.src = data.thumbnails.small;
