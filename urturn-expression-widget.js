@@ -9,7 +9,7 @@
      var ieversion=new Number(RegExp.$1);
      if (ieversion<=8) {
          URTURN_IMAGE = 'http://' + urturn.getHost() + '/widget/turnit.png';
-         URTURN_IMAGE = 'http://' + urturn.getHost() + '/widget/bottom_btn.jpg';
+         URTURN_BOTTOM = 'http://' + urturn.getHost() + '/widget/bottom_btn.jpg';
      }
   }
 
@@ -68,8 +68,8 @@
 
     this.data = null;
 
-
-
+    // Remember if we get more post to load
+    this.has_more = false;
 
 
 
@@ -97,7 +97,6 @@
       });
       this.rootElement.appendChild(this.header);
 
-      console.log('[Registered Height] :', this.height);
       this.theater = this.createElement('div',  {
         width : '100%',
         height : (this.height - 75) + 'px',
@@ -144,17 +143,8 @@
 
         this.urturn.src = URTURN_BOTTOM;
       }
-      if (isIE) {
-        var that = this;
-        function fn(data) {
-          that.clickUrturn(data);
-        }
-        this.urturn.attachEvent('onclick', fn);
-      }
-      else {
-        this.urturn.addEventListener('click', this.clickUrturn.bind(this));
-      }
-     
+      
+      this.listen(this.urturn, 'click', this.clickUrturn);
   
       this.rootElement.appendChild(this.urturn);
 
@@ -211,49 +201,12 @@
       }
     };
 
-    this.clear = function(el) {
-      this.style(el, {
-        margin  : '0px',
-        padding : '0px'
-      });
-    };
-
-    this.style = function(el, style) {
-      for (var key in style) {
-        // Min max bulletProofing
-        if (key == 'width') {
-          el.style['maxWidth'] = style[key];
-          el.style['minWidth'] = style[key];
-        }
-        if (key == 'height') {
-          el.style['maxHeight'] = style[key];
-          el.style['minHeight'] = style[key];
-        }
-        // ! Gecko Hack
-        if (key == 'float') {
-          el.style[key] = style[key];
-          if (!isIE) {
-            el.style.setProperty('float', style[key]);
-          }
-        }
-        else {
-          el.style[key] = style[key];
-        }
-      }
-    };
-
-    this.createElement = function(type, style) {
-      var el = document.createElement(type);
-      this.clear(el);
-      if (style) {
-        this.style(el, style);
-      }
-      return el;
-    };
-
     this.postLoaded = function(data) {
       this.data = data;
       this.adaptSize();
+      if (data.has_more) {
+        this.has_more = true;
+      }
      // this.setCreatorAvatar(data.expression.creator.avatar_thumb_url);
       this.setCTA(data.expression.description, data.expression.creator.username, this.cta, true);
       this.addPost(data.posts);
@@ -427,16 +380,7 @@
           continue;
         }
         if (this.openOnClick) {
-          if (isIE) {
-            var that = this;
-            function fn(data) {
-              that.open(data);
-            }
-            post.attachEvent('onclick', fn);
-          }
-          else {
-            post.addEventListener('click', this.open.bind(this));
-          }
+          this.listen(post, 'click', this.open);
         }
         if (this.numberOfColumns == 1) {
           this.theater.appendChild(post);
@@ -473,17 +417,8 @@
         }
 
         document.body.appendChild(this.popupLayer);
-        if (isIE) {
-          var that = this;
-          function fn(data) {
-            that.closePopup(data);
-          };
-          this.popupLayer.attachEvent('onclick', fn);
-        }
-        else {
-          this.popupLayer.addEventListener('click', this.closePopup.bind(this));
-        }
-
+       
+        this.listen(this.popupLayer, 'click', this.closePopup);
 
         this.popup = this.createElement('div', {
           position : 'absolute',
@@ -539,16 +474,8 @@
           cursor : 'pointer'
         });
 
-      if (isIE) {
-        var that = this;
-        function fn(data) {
-          that.clickUrturnPopup(data);
-        }
-        this.popupUrturn.attachEvent('onclick', fn);
-      }
-      else {
-        this.popupUrturn.addEventListener('click', this.clickUrturnPopup.bind(this));
-      }
+      this.listen(this.popupUrturn, 'click', this.clickUrturnPopup);
+
       this.popupUrturn.src = URTURN_IMAGE;
 
       this.popupHeader.appendChild(this.popupUrturn);
@@ -633,6 +560,61 @@
       this.createView();
       if (this.popupUUID !== this.currentPost) {
         this.createPreview();
+      }
+    };
+
+    /**
+     * UTILS Functions */
+    this.clear = function(el) {
+      this.style(el, {
+        margin  : '0px',
+        padding : '0px'
+      });
+    };
+
+    this.style = function(el, style) {
+      for (var key in style) {
+        // Min max bulletProofing
+        if (key == 'width') {
+          el.style['maxWidth'] = style[key];
+          el.style['minWidth'] = style[key];
+        }
+        if (key == 'height') {
+          el.style['maxHeight'] = style[key];
+          el.style['minHeight'] = style[key];
+        }
+        // ! Gecko Hack
+        if (key == 'float') {
+          el.style[key] = style[key];
+          if (!isIE) {
+            el.style.setProperty('float', style[key]);
+          }
+        }
+        else {
+          el.style[key] = style[key];
+        }
+      }
+    };
+
+    this.createElement = function(type, style) {
+      var el = document.createElement(type);
+      this.clear(el);
+      if (style) {
+        this.style(el, style);
+      }
+      return el;
+    };
+
+    this.listen = function(el, event, callback) {
+      if (isIE) {
+        var that = this;
+        function fn(data) {
+          callback.apply(that,[data]);
+        }
+        el.attachEvent('on' + event, fn);
+      }
+      else {
+        el.addEventListener(event, callback.bind(this));
       }
     };
 
