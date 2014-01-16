@@ -187,7 +187,7 @@
       });
 
       if (this.width) {
-        this.rootElement.style.width = this.width;
+        this.rootElement.style.width = this.width + 'px';
       }
       else {
         this.rootElement.style.width = '100%';
@@ -196,7 +196,7 @@
       }
       
       if (this.height) {
-        this.rootElement.style.height = this.height;
+        this.rootElement.style.height = this.height + 'px';
       }
       else {
         this.rootElement.style.height = '100%';
@@ -368,7 +368,7 @@
         }
         else {
           this.style(column, {
-            float : 'left'
+            'float' : 'left'
           });
         }
         this.columns.push(column);
