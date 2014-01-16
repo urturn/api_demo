@@ -75,15 +75,12 @@
 
 
     this.init = function() {
-      if (isIE) {
-        var that = this;
-        function fn(data) {
-          that.postLoaded(data);
-        }
-        urturn.get('post', 'expression', this.expressionName, this.widgetId, fn);
-      } else {
-        urturn.get('post', 'expression', this.expressionName, this.widgetId, this.postLoaded.bind(this)); 
-      }
+      urturn.get('post',
+        'expression',
+        this.expressionName,
+        this.widgetId,
+         this.bindfn(this, this.postLoaded)
+      );
       this.initUI();
     };
   
@@ -106,6 +103,8 @@
       });
     
       this.rootElement.appendChild(this.theater);
+
+      this.listen(this.theater, 'scroll', this.theaterScrolled);
 
       this.cta = this.createElement('div', {
         width : '100%',
@@ -150,6 +149,29 @@
 
 
       this.calculateColumns();
+    };
+
+
+    this.theaterScrolled = function(e) {
+      if (this.has_more && e.srcElement.scrollHeight == e.srcElement.offsetHeight + e.srcElement.scrollTop) {
+        if (e.preventDefault) {
+          e.preventDefault();
+        }
+        if (e.stopPropagation) {
+          e.stopPropagation();
+        }
+        this.has_more = false;
+        this.loadMore();
+      }
+    };
+
+    this.loadMore = function() {
+      urturn.get('post',
+        'expression',
+        this.expressionName,
+        this.widgetId,
+        this.bindfn(this, this.moreLoaded)
+      );
     };
 
     this.calculateColumns = function() {
@@ -209,6 +231,21 @@
       }
      // this.setCreatorAvatar(data.expression.creator.avatar_thumb_url);
       this.setCTA(data.expression.description, data.expression.creator.username, this.cta, true);
+      
+      // Create Columns
+      if (data.posts.length < 6) {
+        this.numberOfColumns = 1;
+      }
+      else {
+        this.createColumns();
+      }
+      this.addPost(data.posts);
+    };
+
+    this.moreLoaded = function(data) {
+      if (data.has_more) {
+        this.has_more = true;
+      }
       this.addPost(data.posts);
     };
 
@@ -363,12 +400,6 @@
     };
 
     this.addPost = function(posts) {
-      if (posts.length < 6) {
-        this.numberOfColumns = 1;
-      }
-      else {
-        this.createColumns();
-      }
       var i = 0;
       while (i < posts.length) {
         if (posts[i].uuid) {
@@ -607,19 +638,29 @@
 
     this.listen = function(el, event, callback) {
       if (isIE) {
-        var that = this;
-        function fn(data) {
-          callback.apply(that,[data]);
-        }
-        el.attachEvent('on' + event, fn);
+        el.attachEvent('on' + event, this.bindfn(this, callback));
       }
       else {
-        el.addEventListener(event, callback.bind(this));
+        el.addEventListener(event, this.bindfn(this, callback));
+      }
+    };
+
+    this.bindfn = function(bindTo, fn) {
+      if (isIE) {
+        var bindEd = bindTo;
+        function binded() {
+          fn.apply(bindEd,arguments);
+        };
+        return binded;
+      }
+      else {
+        return fn.bind(bindTo);
       }
     };
 
     this.init();
   }
+
 
 
 
