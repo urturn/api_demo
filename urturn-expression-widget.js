@@ -235,7 +235,8 @@
       this.setCTA(data.expression.description, data.expression.creator.username, this.cta, true);
       
       // Create Columns
-      if (data.posts.length < 6) {
+      // Do not create colones if less than 6 post and available width < 500
+      if (data.posts.length < 6 && this.width < 500) {
         this.numberOfColumns = 1;
       }
       else {
