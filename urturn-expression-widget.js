@@ -31,11 +31,11 @@
     }
 
     this.showAvatar = rootElement.getAttribute('data-avatar');
-    if (this.showAvatar === 'hide') {
-      this.showAvatar = false;
+    if (this.showAvatar === 'show') {
+      this.showAvatar = true;
     }
     else {
-      this.showAvatar = true;
+      this.showAvatar = false;
     }
 
 
