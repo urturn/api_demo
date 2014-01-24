@@ -118,12 +118,13 @@
           width     : '160px',
           height    : '50px',
           position  : 'relative',
-          bottom    : (this.height - 12) + 'px',
+          bottom    : '62px',
           left      : (this.width - 160 - 15) + 'px',
           display : 'block',
           cursor : 'hand'
         });
         this.urturn.src = URTURN_IMAGE;
+        this.header.appendChild(this.urturn);
       }
       else {
         this.urturn = this.createElement('img', {
@@ -141,11 +142,12 @@
         });
 
         this.urturn.src = URTURN_BOTTOM;
+        this.rootElement.appendChild(this.urturn);
       }
       
       this.listen(this.urturn, 'click', this.clickUrturn);
   
-      this.rootElement.appendChild(this.urturn);
+  
 
 
       this.calculateColumns();
@@ -451,9 +453,17 @@
        
         this.listen(this.popupLayer, 'click', this.closePopup);
 
+
+        var topScroll = document.body.scrollTop;
+
+        // Gecko Fix, not === on purpose!
+        if (topScroll == 0 && window.pageYOffset != 0) {
+          topScroll = window.pageYOffset;
+        }
+
         this.popup = this.createElement('div', {
           position : 'absolute',
-          top : (document.body.scrollTop + 20) +'px',
+          top : (top + 20) +'px',
           left : '50%',
           marginLeft : '-288px',
           width : '576px',
