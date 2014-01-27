@@ -1,3 +1,4 @@
+/*jshint camalcase: true*/
 
 (function(window, document){
 
@@ -8,8 +9,8 @@
  if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)) { 
      var ieversion=new Number(RegExp.$1);
      if (ieversion<=8) {
-         URTURN_IMAGE = 'http://' + urturn.getHost() + '/widget/turnit.png';
-         URTURN_BOTTOM = 'http://' + urturn.getHost() + '/widget/bottom_btn.jpg';
+        URTURN_IMAGE = 'http://' + urturn.getHost() + '/widget/turnit.png';
+        URTURN_BOTTOM = 'http://' + urturn.getHost() + '/widget/bottom_btn.jpg';
      }
   }
 
@@ -457,7 +458,7 @@
         var topScroll = document.body.scrollTop;
 
         // Gecko Fix, not === on purpose!
-        if (topScroll == 0 && window.pageYOffset != 0) {
+        if (topScroll == 0 && window.pageYOffset !== 0) {
           topScroll = window.pageYOffset;
         }
 
@@ -616,16 +617,16 @@
     this.style = function(el, style) {
       for (var key in style) {
         // Min max bulletProofing
-        if (key == 'width') {
-          el.style['maxWidth'] = style[key];
-          el.style['minWidth'] = style[key];
+        if (key === 'width') {
+          el.style.maxWidth = style[key];
+          el.style.minWidth = style[key];
         }
-        if (key == 'height') {
-          el.style['maxHeight'] = style[key];
-          el.style['minHeight'] = style[key];
+        if (key === 'height') {
+          el.style.maxHeight = style[key];
+          el.style.minHeight = style[key];
         }
         // ! Gecko Hack
-        if (key == 'float') {
+        if (key === 'float') {
           el.style[key] = style[key];
           if (!isIE) {
             el.style.setProperty('float', style[key]);
@@ -671,47 +672,42 @@
     this.init();
   }
 
-
-
-
-
-
-
   function findDomNode(target) {
     if (!isIE) {
       return document.getElementsByName(target);
     }
 
-    var divNodes = document.getElementsByTagName('div');
-    var nodes = [];
-    var i = 0;
-    while (i < divNodes.length) { 
+    var divNodes = document.getElementsByTagName('div'),
+        nodes = [],
+        i = 0,
+        length = divNodes.length;
+
+    for (i=0; i<length; i++){
       if (divNodes[i].getAttribute('name') === target) {
         nodes.push(divNodes[i]);
       }
-      ++i;
     }
     return nodes;
   }
 
   // Find all root dom nodes
   function init() {
-    var walls = findDomNode('urturn-expression-widget');
+    var walls = findDomNode('urturn-expression-widget'),
+        i = 0,
+        length = walls.length;
 
-    var i = 0;
-    while (i < walls.length) {
+    for (i=0; i<length; i++){
       if (!walls[i].getAttribute('loaded')) {
         walls[i].setAttribute('loaded', true);
         new WidgetManager(walls[i]);
       }
-      ++i;
     }
   }
 
   // Check  if dom is loaded
   function checkLoad() {
-    document.readyState !== "complete" ? setTimeout(checkLoad, 20) : init();
-  };
+    document.readyState !== 'complete' ? setTimeout(checkLoad, 20) : init();
+  }
 
   checkLoad();
 })(window, document);
