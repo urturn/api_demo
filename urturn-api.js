@@ -248,7 +248,7 @@ if (!urturn) {
        * @return {Function} [description]
        */
       this.next = function (successCallback, errorCallback) {
-        var url = 'http://' + HOST + ENDPOINT + TYPES[this.queryType].name + '.json?';
+        var url = '//' + HOST + ENDPOINT + TYPES[this.queryType].name + '.json?';
 
         url +=  TYPES[this.queryType].selectors[this.querySelector] + '=' + encodeURIComponent(this.query);
         url += '&page=' + this.page++;
