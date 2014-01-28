@@ -15,7 +15,7 @@ if (!urturn) {
      * The API HOST (usefull for debug in local env)
      * @type {String}
      */
-    var HOST = 'urturn.com';
+    var HOST = 'www.urturn.com';
 
     /**
      * API ENDPOINT
