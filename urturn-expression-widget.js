@@ -332,7 +332,8 @@
         return post;
       }
       var post = this.createElement('img', {
-        width : '100%'
+        width : '100%',
+        display : 'block'
       });
       if (data.thumbnails && data.thumbnails.small) {
         post.src = data.thumbnails.small;
@@ -510,9 +511,9 @@
       this.popupUrturn = this.createElement('img', {
           width     : '160px',
           height    : '50px',
-          position  : 'relative',
-          bottom    : (10) + 'px',
-          left      : (576 - 115 - 60) + 'px',
+          position  : 'absolute',
+          top    : (14) + 'px',
+          right     : '10px',
           display : 'block',
           cursor : 'pointer'
         });
