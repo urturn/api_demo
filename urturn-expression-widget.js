@@ -572,7 +572,10 @@
         this.popupNote = this.createElement('div', {
           width : '100%',
           height : '75px',
-          backgroundColor : this.headerBG
+          backgroundColor : this.headerBG,
+          position : 'absolute',
+          left : '0px',
+          top : ((this.popupPost.thumbnails.thumb_height *  1.986 | 0) + 75) + 'px'
         });
 
         var noteContainer = this.createElement('div', {
