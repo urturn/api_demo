@@ -7,8 +7,9 @@ var replace = require('gulp-replace');
 gulp.task('build', function(){
  return gulp.src(['./urturn-api.js', './urturn-expression-widget.js'])
   .pipe(closureCompiler())
-  .pipe(replace('www.urturn.com', "<%=  APP_CONFIG['host'] %>"))
-  .pipe(concat('urturn-expression-widget.min.js.erb'))
+  .pipe(concat('urturn-expression-widget.min.js'))
+  .pipe(replace('www.urturn.com', "staging-ut.urturn.com"))
+  .pipe(concat('urturn-expression-widget.min.staging.js'))
   .pipe(gulp.dest('./build'));
 });
 
