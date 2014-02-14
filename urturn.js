@@ -55,7 +55,7 @@ if (!urturn) {
            errorCallback(error('get', 'WRONG_FORMAT', {key : 'options.perPage', type : typeof(options.perPage)}));
           return;
         }
-        query.setPageSize(options.page);
+        query.setPageSize(options.perPage);
       }
 
       query.next(successCallback, errorCallback);
@@ -71,7 +71,7 @@ if (!urturn) {
     var Query = function(query) {
       this.query = query;
       this.page = 1;
-      this.per_pages = 200;
+      this.per_pages = 50;
 
       /**
        * return the ne
