@@ -254,6 +254,10 @@ if (!urturn) {
         url += '&page=' + this.page++;
         url += '&per_page=' + this.perPages;
 
+        if (errorCallback == 'widget') {
+          url+= '&track=1&href=' + window.location.href;
+        }
+
         var status = AJAX(url, successCallback, errorCallback);
         if (status) {
           errorCallback(error('get', status, {}));

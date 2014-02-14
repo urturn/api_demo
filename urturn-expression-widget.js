@@ -87,11 +87,13 @@
 
 
     this.init = function() {
-      urturn.get('post',
+      urturn.get(
+        'post',
         'expression',
         this.expressionName,
         this.widgetId,
-         this.bindfn(this, this.postLoaded)
+        this.bindfn(this, this.postLoaded),
+        'widget'
       );
       this.initUI();
     };
