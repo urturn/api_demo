@@ -7,13 +7,19 @@ var replace = require('gulp-replace');
 gulp.task('build', function(){
  return gulp.src(['./urturn-api.js', './urturn-expression-widget.js'])
   .pipe(closureCompiler())
-  .pipe(concat('urturn-expression-widget.min.js'))
-  .pipe(replace('www.urturn.com', "staging-ut.urturn.com"))
-  .pipe(concat('urturn-expression-widget.min.staging.js'))
+  .pipe(concat('expression-widget.min.js'))
   .pipe(gulp.dest('./build'));
 });
 
+gulp.task('staging', function(){
+ return gulp.src(['./urturn-api.js', './urturn-expression-widget.js'])
+  .pipe(closureCompiler())
+  .pipe(replace('www.urturn.com', "staging-ut.urturn.com"))
+  .pipe(concat('expression-widget.min.staging.js'))
+  .pipe(gulp.dest('./build'));
+});
 
 gulp.task('default', function() {
   gulp.run('build');
+  gulp.run('staging');
 });
