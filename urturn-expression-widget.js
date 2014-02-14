@@ -60,11 +60,11 @@
     }
     this.urturnBG  = '#d2523e';
     if (rootElement.getAttribute('data-urturn-color')) {
-      this.headerBG = rootElement.getAttribute('data-urturn-color');
+      this.urturnBG = rootElement.getAttribute('data-urturn-color');
     }
     this.ctaColor  = '#000';
     if (rootElement.getAttribute('data-text-color')) {
-      this.headerBG = rootElement.getAttribute('data-text-color');
+      this.ctaColor = rootElement.getAttribute('data-text-color');
     }
 
     this.widgetId = Math.random() * 100000000 | 0;
