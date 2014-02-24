@@ -19,7 +19,16 @@ gulp.task('staging', function(){
   .pipe(gulp.dest('./build'));
 });
 
+gulp.task('local', function(){
+ return gulp.src(['./urturn-api.js', './urturn-expression-widget.js'])
+  .pipe(closureCompiler())
+  .pipe(replace('"www.urturn.com"', 'document.location.origin'))
+  .pipe(concat('expression-widget.min.local.js'))
+  .pipe(gulp.dest('./build'));
+});
+
 gulp.task('default', function() {
   gulp.run('build');
+  gulp.run('local');
   gulp.run('staging');
 });
