@@ -13,16 +13,16 @@ gulp.task('build', function(){
 
 gulp.task('staging', function(){
  return gulp.src(['./urturn-api.js', './urturn-expression-widget.js'])
-  .pipe(closureCompiler())
   .pipe(replace('www.urturn.com', "staging-ut.urturn.com"))
+  .pipe(closureCompiler())
   .pipe(concat('expression-widget.min.staging.js'))
   .pipe(gulp.dest('./build'));
 });
 
 gulp.task('local', function(){
  return gulp.src(['./urturn-api.js', './urturn-expression-widget.js'])
-  .pipe(closureCompiler())
-  .pipe(replace('"www.urturn.com"', 'document.location.origin'))
+  .pipe(replace("'www.urturn.com'", 'document.location.hostname'))
+//  .pipe(closureCompiler())
   .pipe(concat('expression-widget.min.local.js'))
   .pipe(gulp.dest('./build'));
 });
