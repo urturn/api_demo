@@ -14,7 +14,6 @@ gulp.task('build', function(){
 gulp.task('staging', function(){
  return gulp.src(['./urturn-api.js', './urturn-expression-widget.js'])
   .pipe(replace('www.urturn.com', "staging-ut.urturn.com"))
-  .pipe(closureCompiler())
   .pipe(concat('expression-widget.min.staging.js'))
   .pipe(gulp.dest('./build'));
 });

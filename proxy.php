@@ -1,0 +1,40 @@
+<?php
+// PHP Proxy
+// Responds to both HTTP GET and POST requests
+//
+// Author: Abdul Qabiz
+// March 31st, 2006
+//
+
+// Get the url of to be proxied
+// Is it a POST or a GET?
+$url =  $_GET['url'];
+$headers =  $_GET['headers'];
+$mimeType = 'image/jpeg';
+
+
+//Start the Curl session
+$session = curl_init($url);
+
+
+// Don't return HTTP headers. Do return the contents of the call
+curl_setopt($session, CURLOPT_HEADER, ($headers == "true") ? true : false);
+
+curl_setopt($session, CURLOPT_FOLLOWLOCATION, true); 
+//curl_setopt($ch, CURLOPT_TIMEOUT, 4); 
+curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
+
+// Make the call
+$response = curl_exec($session);
+
+if ($mimeType != "")
+{
+  // The web service returns XML. Set the Content-Type appropriately
+  header("Content-Type: ".$mimeType);
+}
+
+echo $response;
+
+curl_close($session);
+
+?>

@@ -1,0 +1,186 @@
+<html>
+  <head>
+    <script src='./urturn-api.js'>    </script> 
+
+  </head>
+
+  <body>
+     <div id='sel'>
+      <h3>#1 Choose Campaign</h3>
+      Campaign : <input type='text' value='IggyAzalea/ChangeYourLife' id='cpn'/>
+      <input type='button' onclick='getPosts()' value='ok'/>
+    </div>
+    <div id='loader' style='display : none'>
+      <h3>#2 Looking for posts : </h3>
+      <span id='posts'>0</span> post found so far. <input type='button' value='enough!' onclick='stop()' />
+    </div>
+
+    <div id='generator' style='display : none'>
+      <h3>#3 Generate image</h3>
+      PPP : <input type='text' value='320' id='ppp' /><br/>
+      Final Width (CM) : <input type='text' value='60' id='w' /><br/>
+      Final Height (CM) : <input type='text' value='60' id='h' /><br/>
+      
+      Post Width (CM) : <input type='text' value='3' id='pw' /><br/>
+      Post Height (CM) : <input type='text' value='3' id='ph' /><br/>
+      <input type='button' value='generate' onclick='generate()' /> 
+    </div>
+    <div id='render' style='display : none'>
+      <h3>#3 Rendering</h3>
+      <span id='postsO'>0</span> / <span id='postsI'>0</span>  render so far.
+    
+      <input type='button' onclick='reveal()' value='reveal'/>
+    </div>
+    <script>
+
+      var POSTS = [];
+      /*
+      Object
+creator: Object
+note: "#MyBritneyJeanCover"
+post_url: "http://www.urturn.com/documents/C60CB829-2DB0-0001-72D5-C0C01C607B00"
+thumbnails: Object
+default: "http://d3hbqwz8pbf7wl.cloudfront.net/page/thumbnail/C60CB829-2E40-0001-842A-B0185B6015CA/0.jpg"
+has_interaction: false
+small: "http://d3hbqwz8pbf7wl.cloudfront.net/page/thumbnail/C60CB829-2E40-0001-842A-B0185B6015CA/2.jpg"
+thumb_height: 290
+__proto__: Object
+uuid: "C60CB829-2DB0-0001-72D5-C0C01C607B00"
+
+
+
+          'IggyAzalea/ChangeYourLife',
+       */
+      var cpn= '';
+      function  getPosts() {
+         document.getElementById('sel').style.display = 'none';
+         document.getElementById('loader').style.display = 'block';
+        cpn = document.getElementById('cpn').value;
+        urturn.get(
+          'post',
+          'expression',
+          cpn,
+          postLoaded
+        );
+        console.log('rr');
+      }
+
+      function savePosts(p) {
+        for (var i = 0; i < p.length; ++i) {
+          POSTS.push(p[i]);
+        }
+
+        document.getElementById('posts').innerHTML = POSTS.length;
+      }
+
+      var STOP = 0;
+      function postLoaded(data) {
+        if (STOP) {
+          return;
+        }
+        savePosts(data.posts);
+        if(!STOP && data.has_more) {
+          getPosts();
+        }
+        else if (!STOP) {
+          displayGenerator();
+        }
+      }
+
+      function stop() {
+        displayGenerator();
+         STOP = 1;
+      }
+
+      function displayGenerator() {
+        document.getElementById('generator').style.display = 'block';
+
+      }
+
+
+      var PPP = 320;
+      var PPCM = 126;
+      var WIDTH = 60;
+      var HEIGHT = 60;
+      var POST_WIDTH = 3;
+      var POST_HEIGHT = 3;
+      var NPOST = 0;
+
+      function generate() {
+        PPP = parseFloat(document.getElementById('ppp').value);
+        PPCM = PPP * 0.394 | 0;
+        WIDTH = parseFloat(document.getElementById('w').value)
+        HEIGHT = parseFloat(document.getElementById('h').value)
+        POST_WIDTH = parseFloat(document.getElementById('pw').value)
+        POST_HEIGHT = parseFloat(document.getElementById('ph').value)
+
+        var nPost = (WIDTH / POST_WIDTH) * (HEIGHT / POST_HEIGHT);
+        if (nPost > POSTS.length) {
+          alert('You need at least ' + nPost + ' posts to generate this poster.');
+          return;
+        }
+        else {
+          document.getElementById('render').style.display = 'block';
+          document.getElementById('postsI').innerHTML = nPost;
+          document.getElementById('generator').style.display = 'none';           document.getElementById('loader').style.display = 'none';
+          WIDTH = WIDTH * PPCM;
+          HEIGHT = HEIGHT * PPCM;
+          POST_WIDTH = POST_WIDTH * PPCM;
+          POST_HEIGHT = POST_HEIGHT * PPCM;
+          NPOST = nPost;
+          render();
+        }
+      }
+
+      var canvas = null;
+      var ctx= null;
+
+      var X = 0;
+      var Y = 0;
+
+      function render() {
+        canvas = document.createElement('canvas');
+        canvas.width = WIDTH;
+        canvas.height = HEIGHT;
+
+        ctx = canvas.getContext('2d');
+      
+
+        var i = 0;
+        while (i < NPOST) {
+          var img = new Image();
+          img.onload = renderImg;
+          img.src = './proxy.php?url=' + POSTS[i].thumbnails.default.substr(7);
+          ++i;
+        }
+      }
+
+
+      var RC = 0;
+      function renderImg(e) {
+        document.getElementById('postsO').innerHTML = ++RC;
+        ctx.drawImage(e.srcElement, X, Y, POST_WIDTH, POST_HEIGHT);
+        X+= POST_WIDTH;
+        if (X >= WIDTH) {
+          Y += POST_HEIGHT;
+          X = 0;
+        }
+        if (Y >= HEIGHT) {
+          alert('finish, now save image');
+        }
+      };
+
+      function reveal() {
+        var img = document.createElement('img');
+        img.src =   canvas.toDataURL()
+        document.body.appendChild(img);
+      
+      }
+
+  
+    </script>
+
+  </body>
+
+
+</html>
