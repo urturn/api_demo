@@ -1,7 +1,7 @@
 <html>
   <head>
     <script src='./urturn-api.js'>    </script> 
-
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
   </head>
 
   <body>
@@ -170,16 +170,29 @@ uuid: "C60CB829-2DB0-0001-72D5-C0C01C607B00"
         }
       };
 
+      var outE = false;
       function reveal() {
-        var img = document.createElement('img');
-        img.src =   canvas.toDataURL()
-        document.body.appendChild(img);
-      
+        if (outE) {
+          return ;
+        }
+        outE = true;
+        // var img = document.createElement('img');
+       // img.src =   canvas.toDataURL()
+       // document.body.appendChild(img);
+        jQuery.post('./out64.php', {
+          url : canvas.toDataURL()
+        }, function(data) {
+          $( ".result" ).html( '<a href="http://pierreloicdoulcet.fr/test_ut/img/' + data + '"> [View Image] </a>');
+          outE = false;
+          var img = document.createElement('img');
+          img.src =   canvas.toDataURL();
+          document.body.appendChild(img);
+        });
       }
 
   
     </script>
-
+    <div class='result'></div>
   </body>
 
 

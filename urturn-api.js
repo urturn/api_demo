@@ -60,7 +60,7 @@ if (!urturn) {
      *         queryType {String} : The type of query to perform (ex:  'post'),
      *         querySelector {String} : The selector to apply to query (ex : username),
      *         query {String} : The query to get,
-     *         perPage (optional, default 200 or last set value on this query) {Number}: The page to return,
+     *         perPage (optional, default 50 or last set value on this query) {Number}: The page to return,
      *         page (optional, default 0 or last page called + 1) {Number}: the page number
      *       }
      * @param  {Function} successCallback The success callback
@@ -241,7 +241,7 @@ if (!urturn) {
       this.queryType = options.queryType;
       this.querySelector = options.querySelector;
       this.page = 1;
-      this.perPages = 200;
+      this.perPages = 50;
 
       /**
        * return the ne

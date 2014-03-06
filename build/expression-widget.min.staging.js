@@ -60,7 +60,7 @@ if (!urturn) {
      *         queryType {String} : The type of query to perform (ex:  'post'),
      *         querySelector {String} : The selector to apply to query (ex : username),
      *         query {String} : The query to get,
-     *         perPage (optional, default 200 or last set value on this query) {Number}: The page to return,
+     *         perPage (optional, default 50 or last set value on this query) {Number}: The page to return,
      *         page (optional, default 0 or last page called + 1) {Number}: the page number
      *       }
      * @param  {Function} successCallback The success callback
@@ -241,7 +241,7 @@ if (!urturn) {
       this.queryType = options.queryType;
       this.querySelector = options.querySelector;
       this.page = 1;
-      this.perPages = 200;
+      this.perPages = 50;
 
       /**
        * return the ne
@@ -1014,11 +1014,11 @@ if (!urturn) {
         font : '20px Helvetica',
         position : 'relative',
         top : '0px',
-        left : '20px',
+        left : '12px',
         width : (this.width -20) + 'px'
       });
       if (withAuthor) {
-       ctaDiv.innerHTML = CTA + '<br/> <span style="font-size :15px; color : ' + this.ctaColor + '">by ' + author + '</span>';
+       ctaDiv.innerHTML = CTA + '<br/> <span style="font-size :14px; color : ' + this.ctaColor + '">by ' + author + '</span>';
       }
       else {
         ctaDiv.innerHTML = CTA;
@@ -1176,6 +1176,10 @@ if (!urturn) {
 
 
     this.createView = function() {
+      var height = this.popupPost.thumbnails.thumb_height *  1.986;
+      if (height < 10) {
+        height = 576;
+      }
       if (!this.popup) {
         this.popupLayer = this.createElement('div',  {
           position : 'fixed',
@@ -1215,7 +1219,7 @@ if (!urturn) {
           left : '50%',
           marginLeft : '-288px',
           width : '576px',
-          height : (75 + this.popupPost.thumbnails.thumb_height * 1.986 | 0)+'px',
+          height : (75 + height | 0)+'px',
           backgroundColor : this.headerBG,
           zIndex : 1255
         });
@@ -1229,7 +1233,7 @@ if (!urturn) {
 
       this.style(this.popup, {
         top : (document.body.scrollTop + 20) +'px',
-        height : (75 + this.popupPost.thumbnails.thumb_height * 1.986 | 0)+'px'
+        height : (75 + height | 0) + 'px'
       });
     };
 
@@ -1281,11 +1285,16 @@ if (!urturn) {
       this.popupUrturn.appendChild(img);
 
       this.popupHeader.appendChild(this.popupUrturn);
+      
+      var height = this.popupPost.thumbnails.thumb_height *  1.986;
+      if (height < 10) {
+        height = 576;
+      }
 
 
       // We load small first as it is already loaded ( insta display!) 
       this.popupImg = this.createElement('img', {
-        height : (this.popupPost.thumbnails.thumb_height *  1.986 | 0)+'px',
+        height : (height | 0)+'px',
         width : '576px'
       });
       this.popupImg.src = this.popupPost.thumbnails.small;
@@ -1293,7 +1302,7 @@ if (!urturn) {
 
       // We then load defaultThumb ( slower display!) 
       this.popupHDImg = this.createElement('img', {
-        height : (this.popupPost.thumbnails.thumb_height *  1.986 | 0)+'px',
+        height : (height | 0)+'px',
         width : '576px'
       });
       this.popupHDImg.src = this.popupPost.thumbnails['default'];
@@ -1312,11 +1321,11 @@ if (!urturn) {
       if (!isIE && this.popupPost.thumbnails.has_interaction) {
         // Then if needed open in placve! /pages/a0
         this.popupIframe = this.createElement('iframe', {
-          height : (this.popupPost.thumbnails.thumb_height *  1.986 + 2 | 0)+'px',
+          height : (height + 2 | 0)+'px',
           width : '577px',
           position : 'relative',
           left : '0px',
-          top : -(this.popupPost.thumbnails.thumb_height *  1.986 | 0)+'px',
+          top : -(height | 0)+'px',
           border : '0px',
           overflow : 'hidden'
         });
@@ -1333,7 +1342,7 @@ if (!urturn) {
           backgroundColor : this.headerBG,
           position : 'absolute',
           left : '0px',
-          top : ((this.popupPost.thumbnails.thumb_height *  1.986 | 0) + 75) + 'px'
+          top : ((height | 0) + 75) + 'px'
         });
 
         var noteContainer = this.createElement('div', {
@@ -1374,7 +1383,8 @@ if (!urturn) {
     this.clear = function(el) {
       this.style(el, {
         margin  : '0px',
-        padding : '0px'
+        padding : '0px',
+        boxShadow: 'none'
       });
     };
 
