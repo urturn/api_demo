@@ -602,8 +602,8 @@
       this.popupHeader = this.createElement('div', {
         width : '100%',
         height : '75px',
-        backgroundColor : this.headerBG,
-        color : this.ctaColor
+        backgroundColor : '#ffffff',
+        color : '#333333'
       });
       this.popup.appendChild(this.popupHeader);
 
