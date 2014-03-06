@@ -1038,6 +1038,7 @@ if (!urturn) {
       this.style(ctaDiv, {
         top : deltaHeight + 'px'
       });
+      return ctaDiv;
     };
 
     this.createPost = function(data) {
@@ -1333,7 +1334,10 @@ if (!urturn) {
       });
       this.popup.appendChild(this.popupHeader);
 
-      this.setCTA(this.data.expression.description, this.data.expression.creator.username, this.popupHeader);
+ 
+      this.style(this.setCTA(this.data.expression.description, this.data.expression.creator.username, this.popupHeader), {
+        color : '#333333'
+      });
 
       this.popupUrturn = this.createElement('a', {
           width     : '160px',
