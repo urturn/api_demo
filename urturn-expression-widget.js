@@ -289,7 +289,7 @@
       this.avatar.appendChild(img);
     };
 
-    this.setCTA = function(CTA, author, target, withAuthor) {
+    this.setCTA = function(CTA, author, target, withAuthor, fullSize) {
       var ctaDiv = this.createElement('div', {
         color : this.ctaColor,
         font : '20px Helvetica',
@@ -298,6 +298,11 @@
         left : '12px',
         width : (this.width -20) + 'px'
       });
+      if (fullSize) {
+        this.style(ctaDiv, {
+          width : '380px'
+        });
+      }
       if (withAuthor) {
        ctaDiv.innerHTML = CTA + '<br/> <span style="font-size :14px; color : ' + this.ctaColor + '">by ' + author + '</span>';
       }
@@ -609,7 +614,7 @@
       this.popup.appendChild(this.popupHeader);
 
  
-      this.style(this.setCTA(this.data.expression.description, this.data.expression.creator.username, this.popupHeader), {
+      this.style(this.setCTA(this.data.expression.description, this.data.expression.creator.username, this.popupHeader, false, 'fullSize'), {
         color : '#333333'
       });
 
@@ -688,9 +693,8 @@
         this.popup.appendChild(this.popupIframe);
       }
 
-
       // Note
-      if (this.popupPost.note) {
+     // if (this.popupPost.note) {
         this.popupNote = this.createElement('div', {
           width : '100%',
           height : '75px',
@@ -700,18 +704,45 @@
           top : ((height | 0) + 75) + 'px'
         });
 
+        var imgUser = this.createElement('img', {
+          width: '64px',
+          height: '64px',
+          borderRadius : '32px',
+          position : 'absolute',
+          top : '5px',
+          left : '5px'
+        });
+        imgUser.src = this.popupPost.creator.avatar_thumb_url;
+        this.popupNote.appendChild(imgUser);
+
+        var username = this.createElement('div', {
+          width : '480px',
+          font : '14px Helvetica',
+          position : 'absolute',
+          left : '80px',
+          top : '10px',
+          fontWeight :'bold',
+          color : this.ctaColor
+        });
+        username.innerHTML = this.link(
+          this.popupPost.creator.username,
+          'http://' +urturn.getHost() + '/' + this.popupPost.creator.username,
+          this.ctaColor
+        );
+        this.popupNote.appendChild(username);
+
         var noteContainer = this.createElement('div', {
           width : '480px',
           font : '14px Helvetica',
-          position : 'relative',
-          left : '10px',
-          top : '10px',
+          position : 'absolute',
+          left : '80px',
+          top : '30px',
           color : this.ctaColor
         });
-        noteContainer.innerHTML = this.popupPost.note;
+        noteContainer.innerHTML = this.parseTags(this.popupPost.note);
         this.popupNote.appendChild(noteContainer);
         this.popup.appendChild(this.popupNote);
-      }
+     // }
     };
 
     this.updatePopupToHD = function() {
@@ -738,7 +769,82 @@
     };
 
     /**
-     * UTILS Functions */
+     * UTILS Functions 
+    */
+   
+    this.isBreaker = function(character) {
+      var breakers = [
+        '.',
+        ',',
+        ';',
+        '?',
+        '!',
+        ' ',
+        '"',
+        '\'',
+        '\t',
+        '\n',
+        '#',
+        '@',
+        '(',
+        ')',
+        '[',
+        ']',
+        '{',
+        '}'
+      ];
+      for (var i = 0; i < breakers.length; ++i) {
+        if (breakers[i] === character) {
+          return true;
+        }
+      }
+      return false;
+    };
+
+    this.parseTags = function(txt) {
+      var finalTxt = '';
+
+      // Tokenize
+      var tokens = [];
+      var endPreviousToken = 0;
+      // No match in ie So Mano
+      for (var i = 0; i < txt.length; ++i) {
+        if (txt[i] === '#') {
+          tokens.push(txt.substr(endPreviousToken, i - endPreviousToken));
+          endPreviousToken = i;
+          while (i < txt.length && !this.isBreaker(txt[i])) {++i};
+          tokens.push(txt.substr(endPreviousToken, i - endPreviousToken));
+          endPreviousToken = i;
+        }
+      }
+      tokens.push(txt.substr(endPreviousToken, i - endPreviousToken));
+      endPreviousToken = i;
+
+      for (var i = 0; i < tokens.length; ++i) {
+        if (tokens[i] && tokens[i][0] === '#') {
+          finalTxt += this.link(tokens[i],
+            'http://' +urturn.getHost() + '/tag/' + tokens[i].substr(1),
+            '#d2523e'
+          );
+        }
+        else if (tokens[i]) {
+           finalTxt += tokens[i];
+        }
+      }
+
+      return finalTxt;
+    };
+
+    this.link = function(txt, dest, color) {
+      return '<a href="'
+        + dest
+        + '" target="_blank" style="text-decoration : none; color :'
+        + color
+        + '; display:inline;">'
+        + txt
+        + '</a>';
+    };
+
     this.clear = function(el) {
       this.style(el, {
         margin  : '0px',

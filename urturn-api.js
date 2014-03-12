@@ -34,7 +34,8 @@ if (!urturn) {
           id : 'id',
           username : 'username',
           expression : 'expression_name',
-          query : 'q'
+          query : 'q',
+          expressionCreator : 'expression_creator'
         }
       },
       expression : {
