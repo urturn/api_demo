@@ -1282,11 +1282,11 @@ if (!urturn) {
       });
 
       this.style(this.rightArrow, {
-        top : ((document.body.scrollTop + 20) + (height / 2 | 0)) + 'px'
+        top : ((document.body.scrollTop + 20) + 37 + (height / 2 | 0)) + 'px'
       });
       
       this.style(this.leftArrow, {
-        top : ((document.body.scrollTop + 20) + (height / 2 | 0)) + 'px'
+        top : ((document.body.scrollTop + 20) + 37 + (height / 2 | 0)) + 'px'
       });
     };
 
@@ -1342,7 +1342,7 @@ if (!urturn) {
 
  
       this.style(this.setCTA(this.data.expression.description, this.data.expression.creator.username, this.popupHeader, false, 'fullSize'), {
-        color : '#333333'
+        color : '#565050'
       });
 
       this.popupUrturn = this.createElement('a', {
@@ -1422,53 +1422,62 @@ if (!urturn) {
 
       // Note
      // if (this.popupPost.note) {
-        this.popupNote = this.createElement('div', {
-          width : '100%',
-          height : '75px',
-          backgroundColor : this.headerBG,
-          position : 'absolute',
-          left : '0px',
-          top : ((height | 0) + 75) + 'px'
-        });
+      this.popupNote = this.createElement('div', {
+        width : '100%',
+        height : '66px',
+        backgroundColor : '#ffffff',
+        position : 'absolute',
+        left : '0px',
+        top : ((height | 0) + 75) + 'px'
+      });
 
-        var imgUser = this.createElement('img', {
-          width: '64px',
-          height: '64px',
-          borderRadius : '32px',
-          position : 'absolute',
-          top : '5px',
-          left : '5px'
-        });
-        imgUser.src = this.popupPost.creator.avatar_thumb_url;
-        this.popupNote.appendChild(imgUser);
+      var imgUser = this.createElement('img', {
+        width: '56px',
+        height: '56px',
+        borderRadius : '32px',
+        position : 'absolute',
+        top : '5px',
+        left : '5px'
+      });
+      imgUser.src = this.popupPost.creator.avatar_thumb_url;
+      this.popupNote.appendChild(imgUser);
 
-        var username = this.createElement('div', {
-          width : '480px',
-          font : '14px Helvetica',
-          position : 'absolute',
-          left : '80px',
-          top : '10px',
-          fontWeight :'bold',
-          color : this.ctaColor
-        });
-        username.innerHTML = this.link(
-          this.popupPost.creator.username,
-          'http://' +urturn.getHost() + '/' + this.popupPost.creator.username,
-          this.ctaColor
-        );
-        this.popupNote.appendChild(username);
+      var username = this.createElement('div', {
+        width : '480px',
+        font : '14px Helvetica',
+        position : 'absolute',
+        left : '80px',
+        top : '10px',
+        fontWeight :'bold',
+        color : '#565050'
+      });
+      username.innerHTML = this.link(
+        this.popupPost.creator.username,
+        'http://' +urturn.getHost() + '/' + this.popupPost.creator.username,
+        this.ctaColor
+      );
+      this.popupNote.appendChild(username);
 
-        var noteContainer = this.createElement('div', {
-          width : '480px',
-          font : '14px Helvetica',
-          position : 'absolute',
-          left : '80px',
-          top : '30px',
-          color : this.ctaColor
-        });
-        noteContainer.innerHTML = this.parseTags(this.popupPost.note);
-        this.popupNote.appendChild(noteContainer);
-        this.popup.appendChild(this.popupNote);
+      var noteContainer = this.createElement('div', {
+        width : '480px',
+        font : '14px Helvetica',
+        position : 'absolute',
+        left : '80px',
+        top : '30px',
+        color : '#565050'
+      });
+
+      if (this.popupPost.note) {
+        if (this.popupPost.note.length < 65) {
+          noteContainer.innerHTML = this.parseTags(this.popupPost.note);
+        }
+        else {
+          noteContainer.innerHTML = this.parseTags(this.popupPost.note.substr(0, 65));
+        }
+      }
+
+      this.popupNote.appendChild(noteContainer);
+      this.popup.appendChild(this.popupNote);
      // }
     };
 
