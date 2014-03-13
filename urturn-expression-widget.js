@@ -290,6 +290,7 @@
     };
 
     this.setCTA = function(CTA, author, target, withAuthor, fullSize) {
+      
       var ctaDiv = this.createElement('div', {
         color : this.ctaColor,
         font : '20px Helvetica',
@@ -298,6 +299,13 @@
         left : '12px',
         width : (this.width -20) + 'px'
       });
+      
+      if (this.width > 500) {
+        this.style(ctaDiv, {
+          width : (this.width - 20 - 160) + 'px'
+        });
+      }
+
       if (fullSize) {
         this.style(ctaDiv, {
           width : '380px'
