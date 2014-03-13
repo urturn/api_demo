@@ -23,7 +23,7 @@
   function WidgetManager(rootElement) {
     this.rootElement = rootElement;
     
-    this.expressionName =  rootElement.getAttribute('data-expression');
+    this.expressionName =  rootElement.getAttribute('data-author');
 
     this.width = rootElement.getAttribute('data-width');
     this.height = rootElement.getAttribute('data-height');
@@ -92,7 +92,7 @@
     this.init = function() {
       urturn.get(
         'post',
-        'expression',
+        'expressionCreator',
         this.expressionName,
         this.widgetId,
         this.bindfn(this, this.postLoaded),
@@ -103,17 +103,11 @@
   
     this.initUI = function() {
       this.adaptSize();
-      
-      this.header = this.createElement('div', {
-        width : '100%',
-        height : '75px',
-        backgroundColor : this.headerBG
-      });
-      this.rootElement.appendChild(this.header);
+    
 
       this.theater = this.createElement('div',  {
         width : '100%',
-        height : (this.height - 75) + 'px',
+        height : this.height + 'px',
         backgroundColor : this.headerBG,
         overflowX : 'hidden',
         overflowY : 'auto'
@@ -123,65 +117,6 @@
 
       this.listen(this.theater, 'scroll', this.theaterScrolled);
 
-      this.cta = this.createElement('div', {
-        width : '100%',
-        height : '75px',
-        color : this.ctaColor
-      });
-      this.header.appendChild(this.cta);
-
-      if (this.urturnInHeader) {
-        this.urturn = this.createElement('a', {
-          width     : '160px',
-          height    : '50px',
-          position  : 'relative',
-          bottom    : '62px',
-          left      : (this.width - 160 - 15) + 'px',
-          display : 'block',
-          cursor : 'hand'
-        });
-        this.urturn.href =  'http://' + urturn.getHost() + '/' + this.expressionName + '?#!/documents/new';
-        this.urturn.target = '_blank';
-        var img = this.createElement('img', {
-          width     : '160px',
-          height    : '50px',
-          position  : 'absolute',
-          top       : '0px',
-          border    : 'none',
-          left      : '0px',
-          display : 'block'
-        });
-        img.src = URTURN_IMAGE;
-        this.urturn.appendChild(img);
-        this.header.appendChild(this.urturn);
-      }
-      else {
-        this.urturn = this.createElement('a', {
-          width     : '500px',
-          height    : '80px',
-          position  : 'relative',
-          bottom    : '80px',
-          left      : '50%',
-          background : 'linear-gradient(to bottom, rgba(0,0,0,0) 1%,rgba(0,0,0,0.61) 91%,rgba(0,0,0,0.65) 97%,rgba(0,0,0,0.65) 99%)',
-          marginLeft : -(250 | 0) + 'px',
-          display : 'block'
-        });
-
-        this.urturn.href =  'http://' + urturn.getHost() + '/' + this.expressionName + '?#!/documents/new';
-        this.urturn.target = '_blank';
-
-        var img = this.createElement('img', {
-          width     : '218px',
-          height    : '52px',
-          position  : 'absolute',
-          top       : '8px',
-          left      : '141px',
-          display : 'block'
-        });
-        img.src = URTURN_BOTTOM;
-        this.urturn.appendChild(img);
-        this.rootElement.appendChild(this.urturn);
-      }
 
       this.calculateColumns();
     };
@@ -202,7 +137,7 @@
 
     this.loadMore = function() {
       urturn.get('post',
-        'expression',
+        'expressionCreator',
         this.expressionName,
         this.widgetId,
         this.bindfn(this, this.moreLoaded)
@@ -256,8 +191,8 @@
         this.has_more = true;
       }
      // this.setCreatorAvatar(data.expression.creator.avatar_thumb_url);
-      this.setCTA(data.expression.description, data.expression.creator.username, this.cta, true);
-      
+      //this.setCTA(data.expression.description, data.expression.creator.username, this.cta, true);
+      console.log(data);
       // Create Columns
       // Do not create colones if less than 6 post and available width < 500
       if (data.posts.length < 6 && this.width < 500) {
@@ -618,8 +553,8 @@
       });
       this.popup.appendChild(this.popupHeader);
 
- 
-      this.style(this.setCTA(this.data.expression.description, this.data.expression.creator.username, this.popupHeader, false, 'fullSize'), {
+      console.log(this.popupPost);
+      this.style(this.setCTA(this.popupPost.expression.description, this.popupPost.expression.creator.username, this.popupHeader, false, 'fullSize'), {
         color : '#565050'
       });
 
@@ -635,7 +570,7 @@
 
         
       this.popupUrturn.href = 'http://' + urturn.getHost() + '/documents/' + this.popupPost.uuid  + '?#!/documents/new';
-      this.urturn.target = '_blank';
+
       var img = this.createElement('img', {
           width     : '160px',
           height    : '50px',
@@ -947,7 +882,7 @@
 
   // Find all root dom nodes
   function init() {
-    var walls = findDomNode('urturn-expression-widget'),
+    var walls = findDomNode('urturn-author-widget'),
         i = 0,
         length = walls.length;
 
