@@ -294,12 +294,12 @@
         position : 'relative',
         top : '0px',
         left : '12px',
-        width : (this.width -20) + 'px'
+        width : (this.width -40) + 'px'
       });
       
       if (this.width >= 500) {
         this.style(ctaDiv, {
-          width : (this.width - 20 - 160) + 'px'
+          width : (this.width - 40 - 160) + 'px'
         });
       }
 
@@ -510,8 +510,8 @@
           position : 'absolute',
           top : (top + 20) +'px',
           left : '50%',
-          marginLeft : '-288px',
-          width : '576px',
+          marginLeft : '-300px',
+          width : '600px',
           height : (75 + height | 0)+'px',
           backgroundColor : this.headerBG,
           zIndex : 1255
@@ -612,7 +612,7 @@
 
       this.popupHeader = this.createElement('div', {
         width : '100%',
-        height : '75px',
+        height : '94px',
         backgroundColor : '#ffffff',
         color : '#333333'
       });
@@ -660,7 +660,9 @@
       // We load small first as it is already loaded ( insta display!) 
       this.popupImg = this.createElement('img', {
         height : (height | 0)+'px',
-        width : '576px'
+        width : '576px',
+        position : 'relative',
+        left : '12px'
       });
       this.popupImg.src = this.popupPost.thumbnails.small;
       this.popup.appendChild(this.popupImg);
@@ -668,7 +670,9 @@
       // We then load defaultThumb ( slower display!) 
       this.popupHDImg = this.createElement('img', {
         height : (height | 0)+'px',
-        width : '576px'
+        width : '576px',
+        position : 'relative',
+        left : '12px'
       });
       this.popupHDImg.src = this.popupPost.thumbnails['default'];
 
@@ -689,7 +693,7 @@
           height : (height + 2 | 0)+'px',
           width : '577px',
           position : 'relative',
-          left : '0px',
+          left : '12px',
           top : -(height | 0)+'px',
           border : '0px',
           overflow : 'hidden'
