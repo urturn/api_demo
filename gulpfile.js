@@ -26,8 +26,36 @@ gulp.task('local', function(){
   .pipe(gulp.dest('./build'));
 });
 
+
+gulp.task('buildAuthor', function(){
+ return gulp.src(['./urturn-api.js', './urturn-author-widget.js'])
+  .pipe(closureCompiler())
+  .pipe(concat('author-widget.min.js'))
+  .pipe(gulp.dest('./build'));
+});
+
+gulp.task('stagingAuthor', function(){
+ return gulp.src(['./urturn-api.js', './urturn-author-widget.js'])
+  .pipe(replace('www.urturn.com', "staging-ut.urturn.com"))
+  .pipe(concat('author-widget.min.staging.js'))
+  .pipe(gulp.dest('./build'));
+});
+
+gulp.task('localAuthor', function(){
+ return gulp.src(['./urturn-api.js', './urturn-author-widget.js'])
+  .pipe(replace("'www.urturn.com'", 'document.location.hostname'))
+//  .pipe(closureCompiler())
+  .pipe(concat('author-widget.min.local.js'))
+  .pipe(gulp.dest('./build'));
+});
+
+
+
 gulp.task('default', function() {
   gulp.run('build');
   gulp.run('local');
   gulp.run('staging');
+  gulp.run('buildAuthor');
+  gulp.run('localAuthor');
+  gulp.run('stagingAuthor');
 });

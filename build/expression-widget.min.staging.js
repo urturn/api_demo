@@ -816,9 +816,6 @@ if (!urturn) {
     // Remember if we get more post to load
     this.has_more = false;
 
-
-
-
     this.init = function() {
       urturn.get(
         'post',
@@ -1027,7 +1024,7 @@ if (!urturn) {
         width : (this.width -20) + 'px'
       });
       
-      if (this.width > 500) {
+      if (this.width >= 500) {
         this.style(ctaDiv, {
           width : (this.width - 20 - 160) + 'px'
         });
