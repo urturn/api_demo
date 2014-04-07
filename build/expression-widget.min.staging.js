@@ -1403,8 +1403,7 @@ if (!urturn) {
       this.popupImg = this.createElement('img', {
         height : (height | 0)+'px',
         width : '576px',
-        position : 'relative',
-        left : '12px'
+        position : 'relative'
       });
       this.popupImg.src = this.popupPost.thumbnails.small;
       this.popup.appendChild(this.popupImg);
@@ -1413,8 +1412,7 @@ if (!urturn) {
       this.popupHDImg = this.createElement('img', {
         height : (height | 0)+'px',
         width : '576px',
-        position : 'relative',
-        left : '12px'
+        position : 'relative'
       });
       this.popupHDImg.src = this.popupPost.thumbnails['default'];
 
