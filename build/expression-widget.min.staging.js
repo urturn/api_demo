@@ -1392,8 +1392,8 @@ if (!urturn) {
       this.popupUrturn.appendChild(img);
 
       this.popupHeader.appendChild(this.popupUrturn);
-
-      var height = this.popupPost.doc_height * 1.0;
+      
+      var height = this.popupPost.thumb_height * 1.0;
       if (height < 10) {
         height = 576;
       }
