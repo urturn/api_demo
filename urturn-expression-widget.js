@@ -528,7 +528,7 @@
           left : '50%',
           marginLeft : '-300px',
           width : '600px',
-          height : (75 + height | 0)+'px',
+          height : (95 + (height | 0)) +'px',
           backgroundColor : '#faf7f7',
           zIndex : 1255
         });
@@ -572,7 +572,7 @@
 
       this.style(this.popup, {
         top : (document.body.scrollTop + 20) +'px',
-        height : (75 + height | 0) + 'px'
+        height : (95 + (height | 0)) + 'px'
       });
 
       this.style(this.rightArrow, {
@@ -707,7 +707,7 @@
       if (!isIE && !isMobileWeb && this.popupPost.thumbnails.has_interaction) {
         // Then if needed open in placve! /pages/a0
         this.popupIframe = this.createElement('iframe', {
-          height : (height + 2 | 0)+'px',
+          height : (height | 0) + 2 +'px',
           width : '577px',
           position : 'relative',
           left : '12px',
