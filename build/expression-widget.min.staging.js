@@ -1393,7 +1393,7 @@ if (!urturn) {
 
       this.popupHeader.appendChild(this.popupUrturn);
 
-      var height = this.popupPost.doc_height;
+      var height = this.popupPost.doc_height * 1.0;
       if (height < 10) {
         height = 576;
       }
