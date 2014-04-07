@@ -706,7 +706,7 @@
           height : (height + 2 | 0)+'px',
           width : '577px',
           position : 'relative',
-          left : '12px',
+          left : '0px',
           top : -((height | 0) + 3)+'px',
           border : '0px',
           overflow : 'hidden'
