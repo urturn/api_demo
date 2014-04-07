@@ -1211,10 +1211,11 @@ if (!urturn) {
 
 
     this.createView = function() {
-      var height = this.popupPost.thumbnails.thumb_height *  1.986;
-      if (height < 10) {
+      var height = this.popupPost.thumbnails.thumb_height;
+      if (!height || height < 10) {
         height = 576;
       }
+
       if (!this.popup) {
         this.popupLayer = this.createElement('div',  {
           position : 'fixed',
@@ -1253,9 +1254,9 @@ if (!urturn) {
           top : (top + 20) +'px',
           left : '50%',
           marginLeft : '-300px',
-          width : '576px',
+          width : '600px',
           height : (75 + height | 0)+'px',
-          backgroundColor : this.headerBG,
+          backgroundColor : '#faf7f7',
           zIndex : 1255
         });
         this.popup.innerHTML = '';
@@ -1378,6 +1379,7 @@ if (!urturn) {
         
       this.popupUrturn.href = 'http://' + urturn.getHost() + '/documents/' + this.popupPost.uuid  + '?#!/documents/new';
       this.urturn.target = '_blank';
+
       var img = this.createElement('img', {
           width     : '160px',
           height    : '50px',
@@ -1392,18 +1394,19 @@ if (!urturn) {
       this.popupUrturn.appendChild(img);
 
       this.popupHeader.appendChild(this.popupUrturn);
-      
-      var height = this.popupPost.thumb_height * 1.0;
-      if (height < 10) {
+
+      var height = this.popupPost.thumbnails.thumb_height;
+      if (!height || height < 10) {
         height = 576;
       }
 
-
+   
       // We load small first as it is already loaded ( insta display!) 
       this.popupImg = this.createElement('img', {
         height : (height | 0)+'px',
         width : '576px',
-        position : 'relative'
+        position : 'relative',
+        left : '12px'
       });
       this.popupImg.src = this.popupPost.thumbnails.small;
       this.popup.appendChild(this.popupImg);
@@ -1412,6 +1415,7 @@ if (!urturn) {
       this.popupHDImg = this.createElement('img', {
         height : (height | 0)+'px',
         width : '576px',
+        left : '12px',
         position : 'relative'
       });
       this.popupHDImg.src = this.popupPost.thumbnails['default'];
@@ -1433,7 +1437,7 @@ if (!urturn) {
           height : (height + 2 | 0)+'px',
           width : '577px',
           position : 'relative',
-          left : '0px',
+          left : '12px',
           top : -((height | 0) + 3)+'px',
           border : '0px',
           overflow : 'hidden'
@@ -1451,7 +1455,7 @@ if (!urturn) {
         color: '#424242',
         position : 'absolute',
         left : '0px',
-        top : ((height | 0) + 75) + 'px'
+        top : ((height | 0) + 94) + 'px'
       });
 
       var imgUser = this.createElement('img', {
