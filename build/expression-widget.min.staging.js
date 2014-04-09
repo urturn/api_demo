@@ -805,10 +805,16 @@ if (!urturn) {
     if (rootElement.getAttribute('data-urturn-color')) {
       this.urturnBG = rootElement.getAttribute('data-urturn-color');
     }
+
+    //    #B1A9A9 '#565050'
     this.ctaColor  = '#000';
     if (rootElement.getAttribute('data-text-color')) {
       this.ctaColor = rootElement.getAttribute('data-text-color');
     }
+
+
+
+    this.ctaAuthorColor = this.ctaColor;
 
     this.widgetId = Math.random() * 100000000 | 0;
 
@@ -1028,14 +1034,14 @@ if (!urturn) {
       
       var ctaDiv = this.createElement('div', {
         color : this.ctaColor,
-        font : '20px Helvetica',
+        font : '22px Helvetica',
         position : 'relative',
         top : '0px',
         left : '12px',
         width : (this.width - 20) + 'px'
       });
 
-      if (CTA.length > 30) {
+      if (!fullSize && CTA.length > 30) {
         this.style(ctaDiv, {
           font: '15px Helvetica'
         });
@@ -1049,11 +1055,11 @@ if (!urturn) {
 
       if (fullSize) {
         this.style(ctaDiv, {
-          width : '380px'
+          width : '400px'
         });
       }
       if (withAuthor) {
-       ctaDiv.innerHTML = CTA + '<br/> <span style="font-size :14px; color : ' + this.ctaColor + '">by ' + author + '</span>';
+       ctaDiv.innerHTML = CTA + '<br/> <span style="font-size :14px; color : ' + this.ctaAuthorColor + '">by ' + author + '</span>';
       }
       else {
         ctaDiv.innerHTML = CTA;
@@ -1357,7 +1363,7 @@ if (!urturn) {
 
       this.popupHeader = this.createElement('div', {
         width : '100%',
-        height : '94px',
+        height : '74px',
         backgroundColor : '#faf7f7',
         color : '#565050'
       });
@@ -1372,8 +1378,8 @@ if (!urturn) {
           width     : '160px',
           height    : '50px',
           position  : 'absolute',
-          top    : '22px',
-          right     : '10px',
+          top    : '12px',
+          right     : '12px',
           display : 'block',
           borderRadius : '8px'
         });
@@ -1452,12 +1458,12 @@ if (!urturn) {
      // if (this.popupPost.note) {
       this.popupNote = this.createElement('div', {
         width : '100%',
-        height : '66px',
+        height : '80px',
         backgroundColor : '#faf7f7',
         color: '#424242',
         position : 'absolute',
         left : '0px',
-        top : ((height | 0) + 94) + 'px'
+        top : ((height | 0) + 74) + 'px'
       });
 
       var imgUser = this.createElement('img', {
@@ -1465,8 +1471,8 @@ if (!urturn) {
         height: '56px',
         borderRadius : '32px',
         position : 'absolute',
-        top : '5px',
-        left : '5px'
+        top : '12px',
+        left : '12px'
       });
       imgUser.src = this.popupPost.creator.avatar_thumb_url;
       this.popupNote.appendChild(imgUser);
