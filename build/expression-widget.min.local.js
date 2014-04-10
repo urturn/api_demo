@@ -766,6 +766,9 @@ if (!urturn) {
     this.width = rootElement.getAttribute('data-width');
     this.height = rootElement.getAttribute('data-height');
 
+    this.availableWidth = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
+
+
     this.openOnClick = rootElement.getAttribute('data-click');
     if (this.openOnClick == 'open') {
       this.openOnClick = true;
@@ -1219,6 +1222,8 @@ if (!urturn) {
 
 
     this.createView = function() {
+
+      // Create the grey layer
       var height = this.popupPost.thumbnails.thumb_height;
       if (!height || height < 10) {
         height = 576;
@@ -1250,6 +1255,22 @@ if (!urturn) {
         this.listen(this.popupLayer, 'click', this.closePopup);
 
 
+        // Adapt for mobile size
+        this.popupWidth = 600;
+        this.popupHeight = (95 + (height | 0));
+        this.viewHeight = height;
+        this.viewWidth = 576;
+
+        if (this.availableWidth < 700){
+          alert(this.availableWidth);
+          this.popupWidth = this.availableWidth - 60;
+          var r = (this.popupWidth - 24)  / 600;
+          this.viewHeight = height * r | 0;
+          this.popupHeight = (95 + (this.viewHeight | 0)) | 0;
+          this.viewWidth = 576 * r | 0;
+        }
+
+  
         var topScroll = document.body.scrollTop;
 
         // Gecko Fix, not === on purpose!
@@ -1261,9 +1282,9 @@ if (!urturn) {
           position : 'absolute',
           top : (topScroll + 20) +'px',
           left : '50%',
-          marginLeft : '-300px',
-          width : '600px',
-          height : (95 + (height | 0)) +'px',
+          marginLeft : '-' + (this.popupWidth / 2 | 0) + 'px',
+          width : this.popupWidth + 'px',
+          height : this.popupHeight +'px',
           backgroundColor : '#faf7f7',
           zIndex : 1255
         });
@@ -1274,7 +1295,7 @@ if (!urturn) {
           position : 'absolute',
           top : '50%',
           left : '50%',
-          marginLeft : '-358px',
+          marginLeft : -((this.popupWidth / 2 | 0) + 58) + 'px',
           width : '50px',
           height : '50px',
           zIndex : 1255,
@@ -1285,7 +1306,7 @@ if (!urturn) {
           position : 'absolute',
           top : '50%',
           left : '50%',
-          marginLeft : '308px',
+          marginLeft : ((this.popupWidth / 2 | 0) + 8) + 'px',
           width : '50px',
           height : '50px',
           zIndex : 1255,
@@ -1405,14 +1426,29 @@ if (!urturn) {
 
       var height = this.popupPost.thumbnails.thumb_height;
       if (!height || height < 10) {
-        height = 576;
+        height = this.viewHeight;
+      }
+
+      // Adapt for mobile size
+      this.popupWidth = 600;
+      this.popupHeight = (95 + (height | 0));
+      this.viewHeight = height;
+      this.viewWidth = 576;
+
+      if (this.availableWidth < 700){
+        alert(this.availableWidth);
+        this.popupWidth = this.availableWidth - 60;
+        var r = (this.popupWidth - 24)  / 600;
+        this.viewHeight = height * r | 0;
+        this.popupHeight = (95 + (this.viewHeight | 0)) | 0;
+        this.viewWidth = 576 * r | 0;
       }
 
    
       // We load small first as it is already loaded ( insta display!) 
       this.popupImg = this.createElement('img', {
-        height : (height | 0)+'px',
-        width : '576px',
+        height : this.viewHeight +'px',
+        width : this.viewWidth + 'px',
         position : 'relative',
         left : '12px'
       });
@@ -1421,8 +1457,8 @@ if (!urturn) {
 
       // We then load defaultThumb ( slower display!) 
       this.popupHDImg = this.createElement('img', {
-        height : (height | 0)+'px',
-        width : '576px',
+        height : this.viewHeight +'px',
+        width : this.viewWidth + 'px',
         left : '12px',
         position : 'relative'
       });
@@ -1442,11 +1478,11 @@ if (!urturn) {
       if (!isIE && !isMobileWeb && !isHTTPS && this.popupPost.thumbnails.has_interaction) {
         // Then if needed open in placve! /pages/a0
         this.popupIframe = this.createElement('iframe', {
-          height : (height | 0) + 2 +'px',
-          width : '577px',
+          height : ((this.viewHeight | 0) + 2) +'px',
+          width : ((this.viewWidth | 0) + 2) + 'px',
           position : 'relative',
           left : '12px',
-          top : -((height | 0) + 3)+'px',
+          top : -((this.viewHeight | 0)+ 3)+'px',
           border : '0px',
           overflow : 'hidden'
         });
