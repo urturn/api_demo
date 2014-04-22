@@ -6,7 +6,10 @@ var replace = require('gulp-replace');
 
 gulp.task('build', function(){
  return gulp.src(['./urturn-api.js', './urturn-expression-widget.js'])
-  .pipe(closureCompiler())
+  .pipe(closureCompiler({
+      compilerPath: 'compiler.jar',
+      fileName: 'build.js'
+    }))
   .pipe(concat('expression-widget.min.js'))
   .pipe(gulp.dest('./build'));
 });
@@ -29,7 +32,10 @@ gulp.task('local', function(){
 
 gulp.task('buildAuthor', function(){
  return gulp.src(['./urturn-api.js', './urturn-author-widget.js'])
-  .pipe(closureCompiler())
+  .pipe(closureCompiler({
+      compilerPath: 'compiler.jar',
+      fileName: 'build2.js'
+    }))
   .pipe(concat('author-widget.min.js'))
   .pipe(gulp.dest('./build'));
 });
