@@ -569,7 +569,7 @@
         });
 
         
-      this.popupUrturn.href = 'http://' + urturn.getHost() + '/documents/' + this.popupPost.uuid  + '?#!/documents/new';
+      this.popupUrturn.href = 'http://' + urturn.getHost() + '/documents/' + this.popupPost.uuid  + '/new_post';
 
       var img = this.createElement('img', {
           width     : '160px',

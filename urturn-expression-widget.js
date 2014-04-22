@@ -160,7 +160,7 @@
           display : 'block',
           cursor : 'hand'
         });
-        this.urturn.href =  '//' + urturn.getHost() + '/' + this.expressionName + '?#!/documents/new';
+        this.urturn.href =  '//' + urturn.getHost() + '/' + this.expressionName + '/new_post';
         this.urturn.target = '_blank';
         var img = this.createElement('img', {
           width     : '160px',
@@ -187,7 +187,7 @@
           display : 'block'
         });
 
-        this.urturn.href =  '//' + urturn.getHost() + '/' + this.expressionName + '?#!/documents/new';
+        this.urturn.href =  '//' + urturn.getHost() + '/' + this.expressionName + '/new_post';
         this.urturn.target = '_blank';
 
         var img = this.createElement('img', {
@@ -679,7 +679,7 @@
         });
 
         
-      this.popupUrturn.href = '//' + urturn.getHost() + '/documents/' + this.popupPost.uuid  + '?#!/documents/new';
+      this.popupUrturn.href = '//' + urturn.getHost() + '/documents/' + this.popupPost.uuid  + '/new_post';
       this.urturn.target = '_blank';
 
       var img = this.createElement('img', {
