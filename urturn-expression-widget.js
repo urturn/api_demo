@@ -396,7 +396,8 @@
       }
       var post = this.createElement('img', {
         width : '100%',
-        display : 'block'
+        display : 'block',
+        minHeight : this.columnWidth + 'px'
       });
       if (data.thumbnails && data.thumbnails.small) {
         post.src = data.thumbnails.small;
