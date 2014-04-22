@@ -1,2 +1,8 @@
 node_modules/*
 .DS_Store
+build/author-widget.min.js
+build/author-widget.min.local.js
+build/author-widget.min.staging.js
+build/expression-widget.min.js
+build/expression-widget.min.local.js
+build/expression-widget.min.staging.js
