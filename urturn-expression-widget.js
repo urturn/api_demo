@@ -481,9 +481,25 @@
           continue;
         }
         if (this.openOnClick) {
-          this.listen(post, 'click', this.open);
+          // mobile
+          if (isMobileWeb) {
+            var a = this.createElement('a', {
+              width : '100%',
+              height : ((this.width - 17) / this.numberOfColumns | 0) + 'px',
+              overflow : 'hidden',
+              display : 'block'
+            });
+            a.href = '//' + urturn.getHost() + '/documents/' +  posts[i].uuid;
+            a.target = '_blank';
+            a.appendChild(post);
+            post = a;
+          }
+          // common
+          else {
+            this.listen(post, 'click', this.open);
+          }
         }
-        if (this.numberOfColumns == 1) {
+        if (this.numberOfColumns === 1) {
           this.theater.appendChild(post);
         }
         else {
