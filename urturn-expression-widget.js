@@ -160,7 +160,8 @@
           display : 'block',
           cursor : 'hand'
         });
-        this.urturn.href =  '//' + urturn.getHost() + '/' + this.expressionName + '/new_post';
+        var localurl = window.location.href;
+        this.urturn.href =  '//' + urturn.getHost() + '/' + this.expressionName + '/new_post?callback_url=' + localurl;
         this.urturn.target = '_blank';
         var img = this.createElement('img', {
           width     : '160px',
@@ -187,7 +188,8 @@
           display : 'block'
         });
 
-        this.urturn.href =  '//' + urturn.getHost() + '/' + this.expressionName + '/new_post';
+        var localurl = window.location.href;
+        this.urturn.href =  '//' + urturn.getHost() + '/' + this.expressionName +  '/new_post?callback_url=' + localurl;
         this.urturn.target = '_blank';
 
         var img = this.createElement('img', {
@@ -695,8 +697,8 @@
           borderRadius : '8px'
         });
 
-        
-      this.popupUrturn.href = '//' + urturn.getHost() + '/documents/' + this.popupPost.uuid  + '/new_post';
+      var localurl = window.location.href;
+      this.popupUrturn.href = '//' + urturn.getHost() + '/documents/' + this.popupPost.uuid  + '/new_post?callback_url=' + localurl;
       this.urturn.target = '_blank';
 
       var img = this.createElement('img', {
