@@ -256,7 +256,11 @@ if (!urturn) {
         url += '&per_page=' + this.perPages;
 
         if (errorCallback == 'widget') {
-          url+= '&track=1&href=' + window.location.href;
+          var href = window.location.href;
+          if (href.indexOf('?') === -1) {
+            href = href.substr(0, href.indexOf('?'));
+          }          
+          url += '&track=1&href=' + href;
         }
 
         var status = AJAX(url, successCallback, errorCallback);
