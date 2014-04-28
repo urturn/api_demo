@@ -257,7 +257,7 @@ if (!urturn) {
 
         if (errorCallback == 'widget') {
           var href = window.location.href;
-          if (href.indexOf('?') === -1) {
+          if (href.indexOf('?') !== -1) {
             href = href.substr(0, href.indexOf('?'));
           }          
           url += '&track=1&href=' + href;
