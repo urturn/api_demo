@@ -487,7 +487,7 @@
           if (isMobileWeb) {
             var a = this.createElement('a', {
               width : '100%',
-              height : ((this.width - 17) / this.numberOfColumns | 0) + 'px',
+              height : ((this.width) / this.numberOfColumns | 0) + 'px',
               overflow : 'hidden',
               display : 'block'
             });
