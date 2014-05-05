@@ -776,11 +776,28 @@
           left : '12px',
           top : -((this.viewHeight | 0)+ 3)+'px',
           border : '0px',
-          overflow : 'hidden'
+          overflow : 'hidden',
+          visibility : 'hidden'
         });
+
+        
+        this.showIframe = function(e) {
+          if (e.data === 'display') {
+            this.popupIframe.visibility = 'visible';
+          }
+        };
+
+        if (!this.INITLISTENER) {
+          this.INITLISTENER = true;
+          window.addEventListener('message', this.showIframe.bind(this));
+        }
+
+          
         this.popupIframe.src = '//' +urturn.getHost() + '/documents/' +  this.popupPost.uuid + '/pages/1';
         this.popup.appendChild(this.popupIframe);
       }
+
+
 
       // Note
      // if (this.popupPost.note) {
