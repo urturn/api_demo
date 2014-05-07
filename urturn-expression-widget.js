@@ -780,10 +780,13 @@
           visibility : 'hidden'
         });
 
+        this.display = function() {
+          this.popupIframe.visibility = 'visible';
+        };
         
         this.showIframe = function(e) {
           if (e.data === 'display') {
-            this.popupIframe.visibility = 'visible';
+            setTimeout(this.display.bind(this), 2000);
           }
         };
 
