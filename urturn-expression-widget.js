@@ -767,6 +767,7 @@
         this.popupHDImg.onload = this.updatePopupToHD.bind(this);
       }
 
+
       if (!isIE && !isMobileWeb && !isHTTPS && this.popupPost.thumbnails.has_interaction) {
         // Then if needed open in placve! /pages/a0
         this.popupIframe = this.createElement('iframe', {
@@ -774,30 +775,31 @@
           width : ((this.viewWidth | 0) + 2) + 'px',
           position : 'relative',
           left : '12px',
-          top : -((this.viewHeight | 0)+ 3)+'px',
+          top : '-9999999999px',
           border : '0px',
           overflow : 'hidden',
           visibility : 'hidden'
         });
 
-        this.display = function() {
-          this.popupIframe.visibility = 'visible';
+        this.popUPDestTop =  -((this.viewHeight | 0)+ 3)+'px';
+
+        this.displayFrame = function() {
+          this.popupIframe.top = this.popUPDestTop;
         };
         
-        this.showIframe = function(e) {
-          if (e.data === 'display') {
-            setTimeout(this.display.bind(this), 2000);
-          }
-        };
 
+        /*
         if (!this.INITLISTENER) {
           this.INITLISTENER = true;
           window.addEventListener('message', this.showIframe.bind(this));
         }
+        */
 
           
         this.popupIframe.src = '//' +urturn.getHost() + '/documents/' +  this.popupPost.uuid + '/pages/1';
         this.popup.appendChild(this.popupIframe);
+      
+        this.popupImageHd.onclick = this.displayFrame.bind(this);
       }
 
 
