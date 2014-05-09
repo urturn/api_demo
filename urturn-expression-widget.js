@@ -783,7 +783,7 @@
         });
         this.startTime = new Date().getTime();
 
-        this.popUPDestTop =  -((this.viewHeight | 0)+ 1)+'px';
+        this.popUPDestTop =  -((this.viewHeight | 0)+ 3)+'px';
 
         this.displayFrame = function() {
           var now = new Date().getTime() - that.startTime; 
