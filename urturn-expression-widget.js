@@ -770,36 +770,41 @@
 
       if (!isIE && !isMobileWeb && !isHTTPS && this.popupPost.thumbnails.has_interaction) {
         // Then if needed open in placve! /pages/a0
+        var that = this;
         this.popupIframe = this.createElement('iframe', {
-          height : ((this.viewHeight | 0) + 2) +'px',
-          width : ((this.viewWidth | 0) + 2) + 'px',
+          height : ((this.viewHeight | 0)) +'px',
+          width : ((this.viewWidth | 0)) + 'px',
           position : 'relative',
           left : '12px',
-          top : '-9999999999px',
+          top : -10000000+'px',
           border : '0px',
           overflow : 'hidden',
-          visibility : 'hidden'
+          visibility : 'visible'
         });
+        this.startTime = new Date().getTime();
 
-        this.popUPDestTop =  -((this.viewHeight | 0)+ 3)+'px';
+        this.popUPDestTop =  -((this.viewHeight | 0)+ 1)+'px';
 
         this.displayFrame = function() {
-          this.popupIframe.top = this.popUPDestTop;
+          var now = new Date().getTime() - that.startTime; 
+          that.popupImg.removeEventListener('click', that.displayFrame, false);
+          if (now < 5000) {
+            setTimeout(that.showIframe, 5000 - now);
+          }
+          else {
+            that.showIframe();
+          }
         };
-        
 
-        /*
-        if (!this.INITLISTENER) {
-          this.INITLISTENER = true;
-          window.addEventListener('message', this.showIframe.bind(this));
-        }
-        */
+        this.showIframe = function() {
 
-          
+          that.popupIframe.style.top = that.popUPDestTop;
+        };
+              
         this.popupIframe.src = '//' +urturn.getHost() + '/documents/' +  this.popupPost.uuid + '/pages/1';
         this.popup.appendChild(this.popupIframe);
       
-        this.popupImageHd.onclick = this.displayFrame.bind(this);
+        this.popupImg.addEventListener('click',this.displayFrame, false);
       }
 
 
