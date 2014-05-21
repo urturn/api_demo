@@ -112,8 +112,8 @@
     this.init = function() {
       urturn.get(
         'post',
-        'expression',
-        this.expressionName,
+        'expressionCreator',
+        'pepsi',
         this.widgetId,
         this.bindfn(this, this.postLoaded),
         'widget'
@@ -161,7 +161,7 @@
           cursor : 'hand'
         });
         var localurl = window.location.href;
-        this.urturn.href =  '//' + urturn.getHost() + '/' + this.expressionName + '/new_post?callback_url=' + localurl;
+        this.urturn.href =  '//pepsi.urturn.com';
         this.urturn.target = '_blank';
         var img = this.createElement('img', {
           width     : '160px',
@@ -189,7 +189,7 @@
         });
 
         var localurl = window.location.href;
-        this.urturn.href =  '//' + urturn.getHost() + '/' + this.expressionName +  '/new_post?callback_url=' + localurl;
+        this.urturn.href =  ' //pepsi.urturn.com';
         this.urturn.target = '_blank';
 
         var img = this.createElement('img', {
@@ -278,7 +278,7 @@
         this.has_more = true;
       }
      // this.setCreatorAvatar(data.expression.creator.avatar_thumb_url);
-      this.setCTA(data.expression.description, data.expression.creator.username, this.cta, true);
+      this.setCTA("JOIN THE #FUTBOLNOW ART MOVEMENT", "Pepsi", this.cta, true);
       
       // Create Columns
       // Do not create colones if less than 6 post and available width < 500
@@ -683,7 +683,7 @@
       this.popup.appendChild(this.popupHeader);
 
  
-      this.style(this.setCTA(this.data.expression.description, this.data.expression.creator.username, this.popupHeader, false, 'fullSize'), {
+      this.style(this.setCTA("JOIN THE #FUTBOLNOW ART MOVEMENT", "pepsi", this.popupHeader, false, 'fullSize'), {
         color : '#565050'
       });
 
@@ -698,7 +698,7 @@
         });
 
       var localurl = window.location.href;
-      this.popupUrturn.href = '//' + urturn.getHost() + '/documents/' + this.popupPost.uuid  + '/new_post?callback_url=' + localurl;
+      this.popupUrturn.href = '//pepsi.urturn.com';
       this.urturn.target = '_blank';
 
       var img = this.createElement('img', {
@@ -809,7 +809,6 @@
 
 
 
-
       // Note
      // if (this.popupPost.note) {
       this.popupNote = this.createElement('div', {
@@ -842,8 +841,6 @@
         fontWeight :'bold',
         color : '#565050'
       });
-
-
       username.innerHTML = this.link(
         this.popupPost.creator.username,
         '//' +urturn.getHost() + '/' + this.popupPost.creator.username,
@@ -867,11 +864,6 @@
         else {
           noteContainer.innerHTML = this.parseTags(this.popupPost.note.substr(0, 65));
         }
-      }
-      else {
-        this.style(username, {
-          top : '32px'
-        });
       }
 
       this.popupNote.appendChild(noteContainer);
