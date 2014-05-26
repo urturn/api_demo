@@ -861,11 +861,11 @@
       });
 
       if (this.popupPost.note) {
-        if (this.popupPost.note.length < 65) {
+        if (this.popupPost.note.length < 120) {
           noteContainer.innerHTML = this.parseTags(this.popupPost.note);
         }
         else {
-          noteContainer.innerHTML = this.parseTags(this.popupPost.note.substr(0, 65));
+          noteContainer.innerHTML = this.parseTags(this.popupPost.note.substr(0, 120)) + '...';
         }
       }
       else {
