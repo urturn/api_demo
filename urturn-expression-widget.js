@@ -374,8 +374,15 @@
           width : '100%',
           display : 'block'
         });
-        if (data.thumbnails && data.thumbnails.small) {
-          img.src = data.thumbnails.small;
+
+        if ((this.numberOfColumns | 0) >= 1) {
+          if (data.thumbnails && data.thumbnails['default']) {
+             img.src = data.thumbnails['default'];
+          }
+        } else {
+          if (data.thumbnails && data.thumbnails.small) {
+             img.src = data.thumbnails.small;
+          }
         }
 
         img.setAttribute('data-uuid', data.uuid);
@@ -401,9 +408,18 @@
         display : 'block',
         minHeight : this.columnWidth + 'px'
       });
-      if (data.thumbnails && data.thumbnails.small) {
-        post.src = data.thumbnails.small;
+
+      if ((this.numberOfColumns | 0) >= 1) {
+        if (data.thumbnails && data.thumbnails['default']) {
+           post.src = data.thumbnails['default'];
+        }
+      } else {
+        if (data.thumbnails && data.thumbnails.small) {
+           post.src = data.thumbnails.small;
+        }
       }
+
+     
       post.setAttribute('data-uuid', data.uuid);
       return post;
     };
