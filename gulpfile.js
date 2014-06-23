@@ -83,6 +83,31 @@ gulp.task('localPepsi', function(){
 });
 
 
+gulp.task('buildPharrell', function(){
+ return gulp.src(['./urturn-api.js', './pharrell-widget.js'])
+  .pipe(closureCompiler({
+      compilerPath: 'compiler.jar',
+      fileName: 'build2.js'
+    }))
+  .pipe(concat('pharrell-widget.min.js'))
+  .pipe(gulp.dest('./build'));
+});
+
+gulp.task('stagingPharrell', function(){
+ return gulp.src(['./urturn-api.js', './pharrell-widget.js'])
+  .pipe(replace('www.urturn.com', "staging-ut.urturn.com"))
+  .pipe(concat('pharrell-widget.min.staging.js'))
+  .pipe(gulp.dest('./build'));
+});
+
+gulp.task('localPharrell', function(){
+ return gulp.src(['./urturn-api.js', './pharrell-widget.js'])
+  .pipe(replace("'www.urturn.com'", 'document.location.hostname'))
+//  .pipe(closureCompiler())
+  .pipe(concat('pharrell-widget.min.local.js'))
+  .pipe(gulp.dest('./build'));
+});
+
 gulp.task('default', function() {
   gulp.run('build');
   gulp.run('local');
@@ -94,4 +119,8 @@ gulp.task('default', function() {
   gulp.run('buildPepsi');
   gulp.run('localPepsi');
   gulp.run('stagingPepsi');
+
+  gulp.run('buildPharrell');
+  gulp.run('localPharrell');
+  gulp.run('stagingPharrell');
 });

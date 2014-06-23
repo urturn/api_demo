@@ -1,3 +1,734 @@
+/**
+ * URTURN API
+ */
+if (!urturn) {
+
+  var urturn = (function(window) {
+
+    // Create a JSON object only if one does not already exist. We create the
+    // methods in a closure to avoid creating global variables.
+
+    // We create the API object
+    var urturn = {};
+
+    /**
+     * The API HOST (usefull for debug in local env)
+     * @type {String}
+     */
+    var HOST = 'staging-ut.urturn.com';
+
+    /**
+     * API ENDPOINT
+     * @type {String}
+     */
+    var ENDPOINT = '/api/';
+
+    /**
+     * List of request support by this endpoint
+     * @type {Object}
+     */
+    var TYPES = {
+      post : {
+        name : 'posts',
+        selectors : {
+          id : 'id',
+          username : 'username',
+          expression : 'expression_name',
+          query : 'q',
+          expressionCreator : 'expression_creator'
+        }
+      },
+      expression : {
+        name : 'expressions',
+        selectors : {
+          id : 'id',
+          username : 'username',
+          expression : 'expression_name',
+          query : 'q'
+        }
+      }
+    };
+
+    /**
+     * urturn.get let you retrieve post from urturn
+     * This method can be called in 3 different ways :
+     *
+     * #1 : Using an option object :
+     * urturn.get(options, successCallback, errorCallback)
+     * 
+     * @param  {Object} options A set of options
+     *       {
+     *         queryType {String} : The type of query to perform (ex:  'post'),
+     *         querySelector {String} : The selector to apply to query (ex : username),
+     *         query {String} : The query to get,
+     *         perPage (optional, default 50 or last set value on this query) {Number}: The page to return,
+     *         page (optional, default 0 or last page called + 1) {Number}: the page number
+     *       }
+     * @param  {Function} successCallback The success callback
+     * @param  {Function} (optional) errorCallback The errorcallback
+     *
+     * #2 : Using a query to return posts directly :
+     * urturn.get(query, successCallback, errorCallback)
+     * 
+     * @param  {String} query All post matching this query will be returned (ex : 'test')
+     * @param  {Function} successCallback The success callback
+     * @param  {Function} (optional) errorCallback The errorcallback
+     *
+     * #3 : Using more arguments (type, by, query);
+     * urturn.get(type, by, query, successCallback, errorCallback)
+     *
+     * @param  {String} type The type of query to perform (ex:  'post')
+     * @param  {String} by The slector of query to perform (ex:  'username')
+     * @param  {String} query The query to perform (ex:  'q')
+     * @param  {Function} successCallback The success callback
+     * @param  {Function} (optional) errorCallback The errorcallback
+     *
+     *
+     * Note : 
+     *  - All result reurned are paginated. If no page specific page is asked, the query will return
+     *  first page first time it is called, second page second time it is called, ....
+     *
+     *  - the 'post' type is supported with the following selector :
+     *    ~ 'id' : Select a post by id. Return only one post
+     *    ~ 'username' : Select post by username. Return all posts of an user
+     *    ~ 'expression' : Select post by expression. Return all posts of from a given expression
+     *    ~ 'query' : Select post by a query. Return all posts matching the query
+     *  
+     *  - the 'expression' type is supported with the following selector :
+     *    ~ 'id' : Select a expression by id. Return only one expression
+     *    ~ 'username' : Select expression by username. Return all expression of an user
+     *    ~ 'expression' : Select expression by expression name. Return this expression
+     *    ~ 'query' : Select expression by a query. Return all expressions matching the query
+     *    
+     *   @return {bool} Return true when fails, false when no issues detected
+     */
+  
+
+    urturn.get = function(options, successCallback, errorCallback) {
+
+      // Step 1 : We Adapt to the differents function signatures.
+
+      // check if we are in case #3, prototype is : type, by, query, successCallback, errorCallback(optional)
+      if (arguments.length >= 4) {
+        options = {
+          queryType     : arguments[0],
+          querySelector : arguments[1],
+          query         : arguments[2]
+        };
+      
+        if (typeof(arguments[3]) === 'number') {
+          options.id = arguments[3];
+          successCallback = arguments[4];
+          errorCallback = arguments[5];
+        }
+        else {
+          successCallback = arguments[3];
+          errorCallback = arguments[4];
+        }
+      }
+
+      // check if we are in case #2, prototype is : query, successCallback, errorCallback(optional)
+      else if (typeof (options) === 'string') {
+        options = {
+          query         : options,
+          queryType     : 'post',
+          querySelector : 'query'
+        };
+      }
+
+      if (!options.id) {
+        options.id = 0;
+      }
+
+      // Step 2 : We Check validity to the differents arguments
+  
+      if (checkForErrorInArguments(options)) {
+        return true;
+      }
+
+      // Step 3 : We get the corresponding query object
+      
+      var query = _queryStore.get(options);
+
+
+      // Step 4 : We set page and perPages options
+      
+      if (options.page) {
+        query.setPage(options.page);
+      }
+
+      if (options.perPage) {
+        query.setPageSize(options.perPage);
+      }
+
+      // Step 4 : We get the next datas
+
+      query.next(successCallback, errorCallback);
+
+      return false;
+    };
+
+    /**
+     * GEt the HOST
+     * @return The Host
+     */
+    urturn.getHost = function() {
+      return HOST;
+    };
+    
+    /**
+     * Internals Stuff
+     */
+
+    /**
+    * A function to check validity of arguments
+    */
+    var checkForErrorInArguments = function (options, successCallback, errorCallback) {
+      
+      if (!options.query) {
+        errorCallback(error('get', 'MISSING_QUERY', {}));
+        return true;
+      }
+      
+      if (!options.queryType) {
+        errorCallback(error('get', 'MISSING_QUERY_TYPE', {}));
+        return true;
+      }
+
+      if (!options.querySelector) {
+        errorCallback(error('get', 'MISSING_QUERY_SELECTOR', {}));
+        return true;
+      }
+
+      if (typeof(options.query) !== 'string') {
+        errorCallback(error('get', 'WRONG_FORMAT', {key : 'options.query', type : typeof(options.query)}));
+        return true;
+      }
+
+      if (typeof(options.queryType) !== 'string') {
+        errorCallback(error('get', 'WRONG_FORMAT', {key : 'options.queryType', type : typeof(options.queryType)}));
+        return true;
+      }
+
+      if (typeof(options.querySelector) !== 'string') {
+        errorCallback(error('get', 'WRONG_FORMAT', {key : 'options.querySelector', type : typeof(options.querySelector)}));
+        return true;
+      }
+
+      if (options.page) {
+        if (typeof(options.page) !== 'number') {
+          errorCallback(error('get', 'WRONG_FORMAT', {key : 'options.page', type : typeof(options.page)}));
+          return true;
+        }
+      }
+
+      if (options.perPage) {
+        if (typeof(options.perPage) !== 'number') {
+          errorCallback(error('get', 'WRONG_FORMAT', {key : 'options.perPage', type : typeof(options.perPage)}));
+          return true;
+        }
+      }
+      
+      return false;
+    };
+
+
+    /**
+     * The Query object
+     * An objext use to handle a query
+     */
+    var Query = function(options) {
+      this.query = options.query;
+      this.queryType = options.queryType;
+      this.querySelector = options.querySelector;
+      this.page = 1;
+      this.perPages = 50;
+
+      /**
+       * return the ne
+       * @return {Function} [description]
+       */
+      this.next = function (successCallback, errorCallback) {
+        var url = '//' + HOST + ENDPOINT + TYPES[this.queryType].name + '.json?';
+
+        url +=  TYPES[this.queryType].selectors[this.querySelector] + '=' + encodeURIComponent(this.query);
+        url += '&page=' + this.page++;
+        url += '&per_page=' + this.perPages;
+
+        if (errorCallback == 'widget') {
+          var href = window.location.href;
+          if (href.indexOf('?') !== -1) {
+            href = href.substr(0, href.indexOf('?'));
+          }          
+          url += '&track=1&href=' + href;
+        }
+
+        var status = AJAX(url, successCallback, errorCallback);
+        if (status) {
+          errorCallback(error('get', status, {}));
+        }
+      };
+
+      this.setPage = function(page) {
+        if (page | 0 > 0) {
+          // |0 we prevent not rounded values!
+          this.page = page | 0;
+        }
+      };
+
+      this.setPageSize = function(pageSize) {
+        this.perPages = pageSize;
+      };
+
+    };
+
+
+    /**
+     * A helper to manage AJAX
+     */
+    var AJAX = function(url, successCallback, errorCallback) {
+      var xhr = false;
+
+      // Creat XMLHTTPRequest object
+      if (window.XMLHttpRequest) { // if Mozilla, Safari etc
+        xhr = new XMLHttpRequest();
+      }
+      else if (window.ActiveXObject) {// if IE
+        try {
+          xhr = new window.ActiveXObject('Msxml2.XMLHTTP');
+        }
+        catch (catchedError) {
+          try {
+            xhr = new window.ActiveXObject('Microsoft.XMLHTTP');
+          }
+          catch (catchedError2) {
+            return 'XHR_IE_FAIL';
+          }
+        }
+      }
+      else {
+        return 'NO_XHR';
+      }
+
+      xhr.open('GET', url, true);
+
+      xhr.onreadystatechange = function (e) {
+        if (xhr.readyState != 4)
+          return false;
+        var result = JSON.parse(xhr.responseText);
+        successCallback(result);
+      };
+
+      /* // IE6 Do not support that
+      xhr.ontimeout = function(e) {
+        errorCallback(error('get', 'XHR_TIMEOUT', {}));
+      };
+
+      xhr.onerror = function (e) {
+        errorCallback(error('get', 'XHR_ERROR', {}));
+      };
+       */
+ 
+      xhr.send(null);
+    };
+
+
+    /**
+     * An object to manage query (singleton)
+     *
+     * _queyStore.get(queryOption) return a query object corresponding to this options
+     * 
+     * @return {[type]} [description]
+     */
+    var _queryStore = new function () {
+      /**
+       * An hash table to manage query history
+       */
+      this._queryHistory = {};
+
+      /**
+       * get Query Object
+       */
+      this.get = function(options) {
+
+        // We generate an (almost :) ) unique signature for this query
+        var querySignature = options.id + '::' + options.queryType + '::' + options.querySelector + '::' + options.query;
+
+        // We check the query store to see if we already get it and if so return it
+        if (this._queryHistory[querySignature]) {
+          return this._queryHistory[querySignature];
+        }
+
+        // if we do not get this query we return a new one!
+        var _query = new Query(options);
+        this._queryHistory[querySignature] = _query;
+        return _query;
+      };
+    }();
+
+    /**
+     * A function that create human readable error messages
+     */
+    var error = function(fn, code, options) {
+      var errorHash = {};
+
+      errorHash.apiMethod = 'urturn.' + fn;
+      errorHash.message = 'An unknow Error happen!';
+      errorHash.code = code;
+
+      var messages = {
+        'MISSING_QUERY' : 'No query in options hash. We do not know what to search.',
+        'MISSING_QUERY_TYPE' : 'No queryType in options hash. We do not know what to search.',
+        'MISSING_QUERY_SELECTOR' : 'No querySelector in options hash. We do not know what to search.',
+        'WRONG_FORMAT' : '{key} should be a String, was a {type} instead!',
+        'NO_XHR' : 'Can not instanciate XMLHttpRequest Object.',
+        'XHR_ERROR' : 'There was an error on urturn server.',
+        'XHR_TIMEOUT' : 'Request to urturn server Timeout.',
+        'XHR_IE_FAIL' : 'No ActiveXObject for XMLHTTP. (ActiveX not activated?)'
+      };
+
+      if (messages[code]) {
+        errorHash.message = messages[code];
+        for (var key in options) {
+          errorHash.message.replace('{' + key + '}', options.key);
+        }
+      }
+      return errorHash;
+    };
+
+    // IE JSON Polyfill
+    
+    if (typeof JSON !== 'object') {
+        JSON = {};
+    }
+
+    (function () {
+        'use strict';
+
+        function f(n) {
+            // Format integers to have at least two digits.
+            return n < 10 ? '0' + n : n;
+        }
+
+        if (typeof Date.prototype.toJSON !== 'function') {
+
+            Date.prototype.toJSON = function () {
+
+                return isFinite(this.valueOf())
+                    ? this.getUTCFullYear()     + '-' +
+                        f(this.getUTCMonth() + 1) + '-' +
+                        f(this.getUTCDate())      + 'T' +
+                        f(this.getUTCHours())     + ':' +
+                        f(this.getUTCMinutes())   + ':' +
+                        f(this.getUTCSeconds())   + 'Z'
+                    : null;
+            };
+
+            String.prototype.toJSON      =
+                Number.prototype.toJSON  =
+                Boolean.prototype.toJSON = function () {
+                    return this.valueOf();
+                };
+        }
+
+        var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+            escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+            gap,
+            indent,
+            meta = {    // table of character substitutions
+                '\b': '\\b',
+                '\t': '\\t',
+                '\n': '\\n',
+                '\f': '\\f',
+                '\r': '\\r',
+                '"' : '\\"',
+                '\\': '\\\\'
+            },
+            rep;
+
+
+        function quote(string) {
+
+    // If the string contains no control characters, no quote characters, and no
+    // backslash characters, then we can safely slap some quotes around it.
+    // Otherwise we must also replace the offending characters with safe escape
+    // sequences.
+
+            escapable.lastIndex = 0;
+            return escapable.test(string) ? '"' + string.replace(escapable, function (a) {
+                var c = meta[a];
+                return typeof c === 'string'
+                    ? c
+                    : '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
+            }) + '"' : '"' + string + '"';
+        }
+
+
+        function str(key, holder) {
+
+    // Produce a string from holder[key].
+
+            var i,          // The loop counter.
+                k,          // The member key.
+                v,          // The member value.
+                length,
+                mind = gap,
+                partial,
+                value = holder[key];
+
+    // If the value has a toJSON method, call it to obtain a replacement value.
+
+            if (value && typeof value === 'object' &&
+                    typeof value.toJSON === 'function') {
+                value = value.toJSON(key);
+            }
+
+    // If we were called with a replacer function, then call the replacer to
+    // obtain a replacement value.
+
+            if (typeof rep === 'function') {
+                value = rep.call(holder, key, value);
+            }
+
+    // What happens next depends on the value's type.
+
+            switch (typeof value) {
+            case 'string':
+                return quote(value);
+
+            case 'number':
+
+    // JSON numbers must be finite. Encode non-finite numbers as null.
+
+                return isFinite(value) ? String(value) : 'null';
+
+            case 'boolean':
+            case 'null':
+
+    // If the value is a boolean or null, convert it to a string. Note:
+    // typeof null does not produce 'null'. The case is included here in
+    // the remote chance that this gets fixed someday.
+
+                return String(value);
+
+    // If the type is 'object', we might be dealing with an object or an array or
+    // null.
+
+            case 'object':
+
+    // Due to a specification blunder in ECMAScript, typeof null is 'object',
+    // so watch out for that case.
+
+                if (!value) {
+                    return 'null';
+                }
+
+    // Make an array to hold the partial results of stringifying this object value.
+
+                gap += indent;
+                partial = [];
+
+    // Is the value an array?
+
+                if (Object.prototype.toString.apply(value) === '[object Array]') {
+
+    // The value is an array. Stringify every element. Use null as a placeholder
+    // for non-JSON values.
+
+                    length = value.length;
+                    for (i = 0; i < length; i += 1) {
+                        partial[i] = str(i, value) || 'null';
+                    }
+
+    // Join all of the elements together, separated with commas, and wrap them in
+    // brackets.
+
+                    v = partial.length === 0
+                        ? '[]'
+                        : gap
+                        ? '[\n' + gap + partial.join(',\n' + gap) + '\n' + mind + ']'
+                        : '[' + partial.join(',') + ']';
+                    gap = mind;
+                    return v;
+                }
+
+    // If the replacer is an array, use it to select the members to be stringified.
+
+                if (rep && typeof rep === 'object') {
+                    length = rep.length;
+                    for (i = 0; i < length; i += 1) {
+                        if (typeof rep[i] === 'string') {
+                            k = rep[i];
+                            v = str(k, value);
+                            if (v) {
+                                partial.push(quote(k) + (gap ? ': ' : ':') + v);
+                            }
+                        }
+                    }
+                } else {
+
+    // Otherwise, iterate through all of the keys in the object.
+
+                    for (k in value) {
+                        if (Object.prototype.hasOwnProperty.call(value, k)) {
+                            v = str(k, value);
+                            if (v) {
+                                partial.push(quote(k) + (gap ? ': ' : ':') + v);
+                            }
+                        }
+                    }
+                }
+
+    // Join all of the member texts together, separated with commas,
+    // and wrap them in braces.
+
+                v = partial.length === 0
+                    ? '{}'
+                    : gap
+                    ? '{\n' + gap + partial.join(',\n' + gap) + '\n' + mind + '}'
+                    : '{' + partial.join(',') + '}';
+                gap = mind;
+                return v;
+            }
+        }
+
+    // If the JSON object does not yet have a stringify method, give it one.
+
+        if (typeof JSON.stringify !== 'function') {
+            JSON.stringify = function (value, replacer, space) {
+
+    // The stringify method takes a value and an optional replacer, and an optional
+    // space parameter, and returns a JSON text. The replacer can be a function
+    // that can replace values, or an array of strings that will select the keys.
+    // A default replacer method can be provided. Use of the space parameter can
+    // produce text that is more easily readable.
+
+                var i;
+                gap = '';
+                indent = '';
+
+    // If the space parameter is a number, make an indent string containing that
+    // many spaces.
+
+                if (typeof space === 'number') {
+                    for (i = 0; i < space; i += 1) {
+                        indent += ' ';
+                    }
+
+    // If the space parameter is a string, it will be used as the indent string.
+
+                } else if (typeof space === 'string') {
+                    indent = space;
+                }
+
+    // If there is a replacer, it must be a function or an array.
+    // Otherwise, throw an error.
+
+                rep = replacer;
+                if (replacer && typeof replacer !== 'function' &&
+                        (typeof replacer !== 'object' ||
+                        typeof replacer.length !== 'number')) {
+                    throw new Error('JSON.stringify');
+                }
+
+    // Make a fake root object containing our value under the key of ''.
+    // Return the result of stringifying the value.
+
+                return str('', {'': value});
+            };
+        }
+
+
+    // If the JSON object does not yet have a parse method, give it one.
+
+        if (typeof JSON.parse !== 'function') {
+            JSON.parse = function (text, reviver) {
+
+    // The parse method takes a text and an optional reviver function, and returns
+    // a JavaScript value if the text is a valid JSON text.
+
+                var j;
+
+                function walk(holder, key) {
+
+    // The walk method is used to recursively walk the resulting structure so
+    // that modifications can be made.
+
+                    var k, v, value = holder[key];
+                    if (value && typeof value === 'object') {
+                        for (k in value) {
+                            if (Object.prototype.hasOwnProperty.call(value, k)) {
+                                v = walk(value, k);
+                                if (v !== undefined) {
+                                    value[k] = v;
+                                } else {
+                                    delete value[k];
+                                }
+                            }
+                        }
+                    }
+                    return reviver.call(holder, key, value);
+                }
+
+
+    // Parsing happens in four stages. In the first stage, we replace certain
+    // Unicode characters with escape sequences. JavaScript handles many characters
+    // incorrectly, either silently deleting them, or treating them as line endings.
+
+                text = String(text);
+                cx.lastIndex = 0;
+                if (cx.test(text)) {
+                    text = text.replace(cx, function (a) {
+                        return '\\u' +
+                            ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
+                    });
+                }
+
+    // In the second stage, we run the text against regular expressions that look
+    // for non-JSON patterns. We are especially concerned with '()' and 'new'
+    // because they can cause invocation, and '=' because it can cause mutation.
+    // But just to be safe, we want to reject all unexpected forms.
+
+    // We split the second stage into 4 regexp operations in order to work around
+    // crippling inefficiencies in IE's and Safari's regexp engines. First we
+    // replace the JSON backslash pairs with '@' (a non-JSON character). Second, we
+    // replace all simple value tokens with ']' characters. Third, we delete all
+    // open brackets that follow a colon or comma or that begin the text. Finally,
+    // we look to see that the remaining characters are only whitespace or ']' or
+    // ',' or ':' or '{' or '}'. If that is so, then the text is safe for eval.
+
+                if (/^[\],:{}\s]*$/
+                        .test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, '@')
+                            .replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']')
+                            .replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
+
+    // In the third stage we use the eval function to compile the text into a
+    // JavaScript structure. The '{' operator is subject to a syntactic ambiguity
+    // in JavaScript: it can begin a block or an object literal. We wrap the text
+    // in parens to eliminate the ambiguity.
+
+                    j = eval('(' + text + ')');
+
+    // In the optional fourth stage, we recursively walk the new structure, passing
+    // each name/value pair to a reviver function for possible transformation.
+
+                    return typeof reviver === 'function'
+                        ? walk({'': j}, '')
+                        : j;
+                }
+
+    // If the text is not JSON parseable, then a SyntaxError is thrown.
+
+                throw new SyntaxError('JSON.parse');
+            };
+        }
+    }());
+
+    // We return the api object
+    return urturn;
+  })(window);
+}
+
 /*jshint camalcase: true*/
 
 (function(window, document){
@@ -14,21 +745,10 @@
 
   var isMobileWeb = mobilecheck();
 
-  var URTURN_IMAGE =  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAAAyCAYAAADbYdBlAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyNpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDE0IDc5LjE1MTQ4MSwgMjAxMy8wMy8xMy0xMjowOToxNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChNYWNpbnRvc2gpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjBFODA1RUU1QjdFMzExRTM4NUE2RkE5REU2NDZBQzFBIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjBFODA1RUU2QjdFMzExRTM4NUE2RkE5REU2NDZBQzFBIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MEU4MDVFRTNCN0UzMTFFMzg1QTZGQTlERTY0NkFDMUEiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MEU4MDVFRTRCN0UzMTFFMzg1QTZGQTlERTY0NkFDMUEiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz43I+6ZAAAG/0lEQVR42uxda2wU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';
-  var URTURN_BOTTOM = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANoAAAA0CAYAAADsUyYpAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyNpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDE0IDc5LjE1MTQ4MSwgMjAxMy8wMy8xMy0xMjowOToxNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChNYWNpbnRvc2gpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjc4MTk2MEY5QjgxNTExRTNBMjNERjdBMjAwQzhBNDUyIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjc4MTk2MEZBQjgxNTExRTNBMjNERjdBMjAwQzhBNDUyIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6NzgxOTYwRjdCODE1MTFFM0EyM0RGN0EyMDBDOEE0NTIiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6NzgxOTYwRjhCODE1MTFFM0EyM0RGN0EyMDBDOEE0NTIiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz6/dJ9IAAAHZUlEQVR42uycf2xT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';
-  var LEFT_ARROW = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3gMGCgs0SfxaWwAAAPBJREFUaN7t2VENgzAYBODrFCChEpDAHEzCHCEBCWQKkLA5AAfg4PbSkT1sCX+Tsb/k7rlt+qV96RVQlDUkG5I9yZHknWRHMpaG6Pg5M8m6dMSKOQLilYtl3dPeCADXjcNrlxAjAgCmkq/Te+IREO0REJ0QQgghhBBCCCGEEOUimuIRCdIXj0iQwYDo997fr566zd6VjgVyM4ytAAwu+ymSVWoELZm9Yuq0OWGEEUYYYYQRRhhhhPk7ZvT6uszB+PvVDSE8AJwBLIZpPn91MzALPMdwzSK8ZwOmRSkhGb9UTFmI4OF0UusCAFMIYcpZ5wmseW/58zMGrAAAAABJRU5ErkJggg==';
+  var URTURN_IMAGE =  "data:image/png;base64,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";
+  var URTURN_BOTTOM = "data:image/png;base64,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";
+    var LEFT_ARROW = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3gMGCgs0SfxaWwAAAPBJREFUaN7t2VENgzAYBODrFCChEpDAHEzCHCEBCWQKkLA5AAfg4PbSkT1sCX+Tsb/k7rlt+qV96RVQlDUkG5I9yZHknWRHMpaG6Pg5M8m6dMSKOQLilYtl3dPeCADXjcNrlxAjAgCmkq/Te+IREO0REJ0QQgghhBBCCCGEEOUimuIRCdIXj0iQwYDo997fr566zd6VjgVyM4ytAAwu+ymSVWoELZm9Yuq0OWGEEUYYYYQRRhhhhPk7ZvT6uszB+PvVDSE8AJwBLIZpPn91MzALPMdwzSK8ZwOmRSkhGb9UTFmI4OF0UusCAFMIYcpZ5wmseW/58zMGrAAAAABJRU5ErkJggg==';
   var RIGHT_ARROW = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAPFJREFUeNrs2dENgyAQBmBxAkdwBEewGziCGzkCI5BO4AjtBnYD2YAeCX0rqdSAd+S/5MLLmfDJYQI2DaKCcM71lJryQblRGspRGmKg3N330JIgMYQcDE1ycseiOKZNrB8O1s2lMamQV0LtzLbNwtcqNdhilpowGhhggAEGGGCAAQYYYLhgxlowhvO53yRA1lxH3dNXSTRkaZe2MMK/4S7hsbukS71Y+BvMTjpiDysIBBBAAAEEEEAAAYQ0RIBsNSAmrohcf3V9WMqbUurJEWI5Iv5prV7knohgFvGIH5jVr9hVc1Jn2oyGz8Tt1fvhLcAAC+9v+cEOuukAAAAASUVORK5CYII=';
-
-
-  if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)) {
-    var ieversion = new Number(RegExp.$1);
-    if (ieversion<=8) {
-      URTURN_IMAGE = '//' + urturn.getHost() + '/widget/turnit.png';
-      URTURN_BOTTOM = '//' + urturn.getHost() + '/widget/bottom_btn.png';
-      LEFT_ARROW = '//' + urturn.getHost() + '/widget/arrow_left.png';
-      RIGHT_ARROW = '//' + urturn.getHost() + '/widget/arrow_right.png';
-    }
-  }
 
 
   function WidgetManager(rootElement) {
@@ -73,7 +793,7 @@
 
     this.avatarBG  = '#eae9e8';
 
-    this.headerBG  = '#faf9f7';
+    this.headerBG  = '#f93c3a';
     if (rootElement.getAttribute('data-header-color')) {
       this.headerBG = rootElement.getAttribute('data-header-color');
     }
@@ -83,7 +803,7 @@
     }
 
     //    #B1A9A9 '#565050'
-    this.ctaColor  = '#000';
+    this.ctaColor  = '#fbecd9';
     if (rootElement.getAttribute('data-text-color')) {
       this.ctaColor = rootElement.getAttribute('data-text-color');
     }
@@ -278,7 +998,7 @@
         this.has_more = true;
       }
      // this.setCreatorAvatar(data.expression.creator.avatar_thumb_url);
-      this.setCTA(data.expression.description, data.expression.creator.username, this.cta, true);
+      this.setCTA(data.expression.description, data.expression.creator.username, this.cta, false);
       
       // Create Columns
       // Do not create colones if less than 6 post and available width < 500
@@ -309,10 +1029,12 @@
     };
 
     this.setCTA = function(CTA, author, target, withAuthor, fullSize) {
-      
+      CTA = CTA.toUpperCase();
       var ctaDiv = this.createElement('div', {
         color : this.ctaColor,
-        font : '22px Helvetica',
+        font : "26px  'Lato', Arial, Helvetica, sans-serif",
+        lineHeight : '34px',
+        letterSpacing: '2px',
         position : 'relative',
         top : '0px',
         left : '12px',
@@ -321,7 +1043,7 @@
 
       if (!fullSize && CTA.length > 30) {
         this.style(ctaDiv, {
-          font: '15px Helvetica'
+          font: "15px  'Lato', Arial, Helvetica, sans-serif"
         });
       }
             
@@ -593,7 +1315,7 @@
           marginLeft : '-' + (this.popupWidth / 2 | 0) + 'px',
           width : this.popupWidth + 'px',
           height : this.popupHeight +'px',
-          backgroundColor : '#faf7f7',
+          backgroundColor : '#f93c3a',
           zIndex : 1255
         });
         this.popup.innerHTML = '';
@@ -693,14 +1415,14 @@
       this.popupHeader = this.createElement('div', {
         width : '100%',
         height : '74px',
-        backgroundColor : '#faf7f7',
-        color : '#565050'
+        backgroundColor : '#f93c3a',
+        color : '#fbecd9'
       });
       this.popup.appendChild(this.popupHeader);
 
  
       this.style(this.setCTA(this.data.expression.description, this.data.expression.creator.username, this.popupHeader, false, 'fullSize'), {
-        color : '#565050'
+        color : '#fbecd9'
       });
 
       this.popupUrturn = this.createElement('a', {
@@ -831,7 +1553,7 @@
       this.popupNote = this.createElement('div', {
         width : '100%',
         height : '80px',
-        backgroundColor : '#faf7f7',
+        backgroundColor : '#f93c3a',
         color: '#424242',
         position : 'absolute',
         left : '0px',
@@ -851,7 +1573,7 @@
 
       var username = this.createElement('div', {
         width : '480px',
-        font : '14px Helvetica',
+        font : "14px  'Lato', Arial, Helvetica, sans-serif",
         position : 'absolute',
         left : '80px',
         top : '10px',
@@ -869,7 +1591,7 @@
 
       var noteContainer = this.createElement('div', {
         width : '480px',
-        font : '14px Helvetica',
+        font : "14px  'Lato', Arial, Helvetica, sans-serif",
         position : 'absolute',
         left : '80px',
         top : '30px',
@@ -1064,13 +1786,17 @@
   }
 
   function findDomNode(target) {
+    if (!isIE) {
+      return [document.getElementById(target)];
+    }
+
     var divNodes = document.getElementsByTagName('div'),
         nodes = [],
         i = 0,
         length = divNodes.length;
 
     for (i=0; i<length; i++){
-      if (divNodes[i].getAttribute('data-name') === target) {
+      if (divNodes[i].getAttribute('name') === target) {
         nodes.push(divNodes[i]);
       }
     }
@@ -1093,7 +1819,7 @@
 
   // Check  if dom is loaded
   function checkLoad() {
-    (document.readyState !== 'complete' && document.readyState !== 'interactive') ? setTimeout(checkLoad, 20) : init();
+    (document.readyState !== 'complete' && document.readyState !== 'interactive')? setTimeout(checkLoad, 20) : init();
   }
 
   checkLoad();
