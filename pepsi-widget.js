@@ -161,7 +161,7 @@
           cursor : 'hand'
         });
         var localurl = window.location.href;
-        this.urturn.href =  '//pepsi.urturn.com';
+        this.urturn.href =  'http://pepsi.urturn.com';
         this.urturn.target = '_blank';
         var img = this.createElement('img', {
           width     : '160px',
@@ -189,7 +189,7 @@
         });
 
         var localurl = window.location.href;
-        this.urturn.href =  ' //pepsi.urturn.com';
+        this.urturn.href =  'http://pepsi.urturn.com';
         this.urturn.target = '_blank';
 
         var img = this.createElement('img', {
@@ -698,7 +698,7 @@
         });
 
       var localurl = window.location.href;
-      this.popupUrturn.href = '//pepsi.urturn.com';
+      this.popupUrturn.href = 'http://pepsi.urturn.com';
       this.urturn.target = '_blank';
 
       var img = this.createElement('img', {

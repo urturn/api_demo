@@ -1554,7 +1554,7 @@ if (!urturn) {
         width : '100%',
         height : '80px',
         backgroundColor : '#f93c3a',
-        color: '#424242',
+        color: '#fbecd9',
         position : 'absolute',
         left : '0px',
         top : ((height | 0) + 74) + 'px'
@@ -1578,7 +1578,7 @@ if (!urturn) {
         left : '80px',
         top : '10px',
         fontWeight :'bold',
-        color : '#565050'
+        color : '#fbecd9'
       });
 
 
@@ -1595,7 +1595,7 @@ if (!urturn) {
         position : 'absolute',
         left : '80px',
         top : '30px',
-        color : '#565050'
+        color : '#fbecd9'
       });
 
       if (this.popupPost.note) {
@@ -1696,7 +1696,7 @@ if (!urturn) {
         if (tokens[i] && tokens[i][0] === '#') {
           finalTxt += this.link(tokens[i],
             '//' +urturn.getHost() + '/tag/' + tokens[i].substr(1),
-            '#d2523e'
+            '#fbecd9'
           );
         }
         else if (tokens[i]) {
