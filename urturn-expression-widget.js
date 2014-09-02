@@ -758,7 +758,7 @@
         height : this.viewHeight +'px',
         width : this.viewWidth + 'px',
         position : 'relative',
-        left : '12px'
+        left : '0px'
       });
       this.popupImg.src = this.popupPost.thumbnails.small;
       this.popup.appendChild(this.popupImg);
@@ -767,7 +767,7 @@
       this.popupHDImg = this.createElement('img', {
         height : this.viewHeight +'px',
         width : this.viewWidth + 'px',
-        left : '12px',
+        left : '0px',
         position : 'relative'
       });
       this.popupHDImg.src = this.popupPost.thumbnails['default'];
@@ -791,7 +791,7 @@
           height : ((this.viewHeight | 0)) +'px',
           width : ((this.viewWidth | 0)) + 'px',
           position : 'relative',
-          left : '12px',
+          left : '0px',
           top : -10000000+'px',
           border : '0px',
           overflow : 'hidden',
@@ -1070,7 +1070,8 @@
         length = divNodes.length;
 
     for (i=0; i<length; i++){
-      if (divNodes[i].getAttribute('data-name') === target) {
+      // retrocompatibility
+      if (divNodes[i].getAttribute('data-name') === target || divNodes[i].getAttribute('name') === target) {
         nodes.push(divNodes[i]);
       }
     }

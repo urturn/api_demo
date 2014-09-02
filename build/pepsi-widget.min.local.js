@@ -1430,7 +1430,7 @@ if (!urturn) {
 
       var localurl = window.location.href;
       this.popupUrturn.href = 'http://pepsi.urturn.com';
-      this.urturn.target = '_blank';
+      this.popupUrturn.target = '_blank';
 
       var img = this.createElement('img', {
           width     : '160px',

@@ -67,6 +67,16 @@ gulp.task('buildPepsi', function(){
   .pipe(gulp.dest('./build'));
 });
 
+gulp.task('buildPepsiKa', function(){
+ return gulp.src(['./urturn-api.js', './pepsi-widget-ka.js'])
+  .pipe(closureCompiler({
+      compilerPath: 'compiler.jar',
+      fileName: 'build2.js'
+    }))
+  .pipe(concat('pepsi-widget-ka.min.js'))
+  .pipe(gulp.dest('./build'));
+});
+
 gulp.task('stagingPepsi', function(){
  return gulp.src(['./urturn-api.js', './upepsi-widget.js'])
   .pipe(replace('www.urturn.com', "staging-ut.urturn.com"))
@@ -123,4 +133,6 @@ gulp.task('default', function() {
   gulp.run('buildPharrell');
   gulp.run('localPharrell');
   gulp.run('stagingPharrell');
+
+  gulp.run('buildPepsiKa');
 });
