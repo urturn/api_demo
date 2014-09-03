@@ -546,7 +546,8 @@
           opacity : '0.8',
           top : '0px',
           left : '0px',
-          zIndex : 1251
+          zIndex : 1251,
+          textAlign : left
         });
 
         if (isIE) {
@@ -594,7 +595,8 @@
           width : this.popupWidth + 'px',
           height : this.popupHeight +'px',
           backgroundColor : '#faf7f7',
-          zIndex : 1255
+          zIndex : 1255,
+          textAlign : 'left'
         });
         this.popup.innerHTML = '';
         document.body.appendChild(this.popup);
