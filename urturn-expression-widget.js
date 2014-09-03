@@ -722,7 +722,7 @@
           height    : '50px',
           position  : 'absolute',
           top       : '0px',
-          left      : '0px',
+          left      : '12px',
           display : 'block',
           border : 'none'
       });
@@ -767,7 +767,7 @@
       this.popupHDImg = this.createElement('img', {
         height : this.viewHeight +'px',
         width : this.viewWidth + 'px',
-        left : '0px',
+        left : '12px',
         position : 'relative'
       });
       this.popupHDImg.src = this.popupPost.thumbnails['default'];
