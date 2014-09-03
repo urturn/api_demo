@@ -547,7 +547,7 @@
           top : '0px',
           left : '0px',
           zIndex : 1251,
-          textAlign : left
+          textAlign : 'left'
         });
 
         if (isIE) {
