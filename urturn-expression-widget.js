@@ -791,7 +791,7 @@
           height : ((this.viewHeight | 0)) +'px',
           width : ((this.viewWidth | 0)) + 'px',
           position : 'relative',
-          left : '0px',
+          left : '12px',
           top : -10000000+'px',
           border : '0px',
           overflow : 'hidden',
