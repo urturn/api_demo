@@ -722,7 +722,7 @@
           height    : '50px',
           position  : 'absolute',
           top       : '0px',
-          left      : '12px',
+          left      : '0px',
           display : 'block',
           border : 'none'
       });
@@ -758,7 +758,7 @@
         height : this.viewHeight +'px',
         width : this.viewWidth + 'px',
         position : 'relative',
-        left : '0px'
+        left : '12px'
       });
       this.popupImg.src = this.popupPost.thumbnails.small;
       this.popup.appendChild(this.popupImg);
