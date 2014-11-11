@@ -354,6 +354,10 @@
     };
 
     this.createPost = function(data) {
+      if (!data.thumbnails) {
+        return null;
+      }
+
       if (this.showAvatar) {
         var height = 290;
         if (data.thumbnails && data.thumbnails.thumb_height) {
@@ -403,6 +407,7 @@
         post.setAttribute('data-uuid', data.uuid);
         return post;
       }
+
       var post = this.createElement('img', {
         width : '100%',
         display : 'block',
