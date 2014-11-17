@@ -576,7 +576,6 @@
         this.viewWidth = 576;
 
         if (this.availableWidth < 700){
-          alert(this.availableWidth);
           this.popupWidth = this.availableWidth - 60;
           var r = (this.popupWidth - 24)  / 600;
           this.viewHeight = height * r | 0;
@@ -751,7 +750,6 @@
       this.viewWidth = 576;
 
       if (this.availableWidth < 700){
-        alert(this.availableWidth);
         this.popupWidth = this.availableWidth - 60;
         var r = (this.popupWidth - 24)  / 600;
         this.viewHeight = height * r | 0;
